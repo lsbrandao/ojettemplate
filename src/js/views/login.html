@@ -1,0 +1,25 @@
+<div class="oj-hybrid-padding" data-bind="visible: !$parent.isLoggedIn()">
+  <div>
+    <div class="oj-flex oj-sm-flex-direction-column oj-md-flex-direction-column"> 
+      <div class="oj-flex-item">
+        <label for="username">Username</label>
+        <input id="username" required="true" type="text" 
+               data-bind="ojComponent: {
+                    component: 'ojInputText', 
+                    value: username,
+                    invalidComponentTracker: tracker}"/>
+      </div>
+      <div class="oj-flex-item">
+        <label for="password">Password</label>
+        <input id="password" required="true" type="password" 
+               data-bind="ojComponent: {
+                    component: 'ojInputPassword', 
+                    value: password,
+                    invalidComponentTracker: tracker}"/>
+      </div>
+      <div class="oj-flex-item">
+        <input id="inputButton" type="button" data-bind="click: login, ojComponent: {component: 'ojButton', label: 'Login', chroming: 'full'}"/>
+      </div>
+    </div> 
+  </div>
+</div>
