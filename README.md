@@ -4,7 +4,7 @@
 
 Download the .zip template file and use it as a starter template for a new project, using the following command:
 
-ojet create <project name> --template="<path to file>/template.zip"
+`ojet create <project name> --template="<path to file>/template.zip"`
 
 ## Update the template
 
