@@ -4,91 +4,91 @@ const app = express();
 
 app.use(express.json());
 
-const courses = [{
+const employees = [{
         id: 1,
-        name: 'course1'
+        name: 'employee1'
     },
     {
         id: 2,
-        name: 'course2'
+        name: 'employee2'
     },
     {
         id: 3,
-        name: 'course3'
+        name: 'employee3'
     }
 ];
 
 app.get('/', (req, res) => {
-    res.send('Hello World!!!');
+    res.send('Home');
 });
 
-app.get('/api/courses', (req, res) => {
-    res.send(courses);
+app.get('/api/employees', (req, res) => {
+    res.send(employees);
 });
 
-app.get('/api/courses/:id', (req, res) => {
-    const course = courses.find(c =>
-        c.id === parseInt(req.params.id)
+app.get('/api/employees/:id', (req, res) => {
+    const employee = employees.find(e =>
+        e.id === parseInt(req.params.id)
     );
-    if (!course) return res.status(404).send('Course not found');
-    res.send(course);
+    if (!employee) return res.status(404).send('employee not found');
+    res.send(employee);
 });
 
-app.post('/api/courses', (req, res) => {
+app.post('/api/employees', (req, res) => {
     const {
         error
-    } = validateCourse(req.body); // result.error
+    } = validateEmployee(req.body); // result.error
     if (error) return res.status(400).send(error.details[0].message); // If invalid, return 400 - Bad request
 
-    const course = {
+    const employee = {
         id: courses.length + 1,
         name: req.body.name
     };
-    courses.push(course);
-    res.send(course);
+    employees.push(employee);
+    res.send(employees);
 });
 
-app.put('/api/courses/:id', (req, res) => {
-    //Look up the course
-    const course = courses.find(c =>
-        c.id === parseInt(req.params.id)
+app.put('/api/employee/:id', (req, res) => {
+    //Look up the employee
+    const employee = employees.find(e =>
+        e.id === parseInt(req.params.id)
     );
-    if (!course) return res.status(404).send('Course not found'); // If not existing, return 404
+    if (!employee) return res.status(404).send('employee not found'); // If not existing, return 404
 
     // Validate
     const {
         error
-    } = validateCourse(req.body); // result.error
+    } = validateEmployee(req.body); // result.error
 
     if (error) return res.status(400).send(error.details[0].message); // If invalid, return 400 - Bad request
 
-    // Update course
-    course.name = req.body.name;
+    // Update employee
+    employee.name = req.body.name;
 
-    //Return updated course to client
-    res.send(course);
+    //Return updated employee to client
+    res.send(employee);
 });
 
-app.delete('/api/courses/:id', (req, res) => {
-    //Find course
-    const course = courses.find(c =>
-        c.id === parseInt(req.params.id)
+app.delete('/api/employee/:id', (req, res) => {
+    //Find employee
+    const employee = employees.find(e =>
+        e.id === parseInt(req.params.id)
     );
-    if (!course) return res.status(404).send('Course not found'); // If not existing, return 404
+    if (!employee) return res.status(404).send('employee not found'); // If not existing, return 404
 
-    //Delete course in array
-    const index = courses.indexOf(course);
-    courses.splice(index, 1);
+    //Delete employee in array
+    const index = employees.indexOf(employee);
+    employees.splice(index, 1);
 
-    res.send(course);
+    res.send(employee);
 });
 
-function validateCourse(course) {
+function validateEmployee(employee) {
     const schema = {
         name: Joi.string().min(3).required()
     };
 
-    return Joi.validate(course, schema);
+    return Joi.validate(employee, schema);
 }
 
 // PORT
