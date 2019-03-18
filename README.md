@@ -8,9 +8,9 @@ Download the .zip template file and use it as a starter template for a new proje
 
 ## Update the template
 
-After creating a new project modify and update it as needed.
+After creating a new project, modify and add new content as needed.
 
-After modifying and updating it, run the following command from the root of the project.
+After modifying it, run the following command from the root of the project.
 
 `ojet strip`
 
