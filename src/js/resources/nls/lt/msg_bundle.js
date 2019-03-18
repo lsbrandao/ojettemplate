@@ -1,7 +1,7 @@
 define({
   "incidentNumber": "Įvykio numeris",
   "dasboardMenu": "Pagrindinis",
-  "appName": "Red Samurai Programa",
+  "appName": "",
   "copyright": "Visos teisės saugomos © 2014, 2016 Oracle",
   "about": "Apie",
   "contacts": "Kontaktai",
