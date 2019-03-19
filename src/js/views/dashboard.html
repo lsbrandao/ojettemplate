@@ -3,8 +3,24 @@
  The Universal Permissive License (UPL), Version 1.0
  -->
 <div class="oj-hybrid-padding">
-  <h3>Dashboard Content Area</h3>
-  <div>
-      To change the content of this section, you will make edits to the dashboard.html file located in the /js/views folder.
+  <h3>Dashboard Content Area 2 </h3>
+  <div class="oj-hybrid-padding">
+    <div>
+      <!-- Following code renders the button that the user 
+         taps to invoke the camera -->
+      <oj-button id='TakePhoto' on-oj-action='[[buttonClick]]'>
+        Take Picture
+      </oj-button>
+      <br>
+      <!-- Following code renders a list where the pictures 
+          from the device camera will appear. -->
+      <ul data-bind="foreach: pics" class="oj-flex oj-flex-items-pad">
+        <li style="list-style: none" class="oj-flex-item">
+          <input type="image" style="border:1px solid black"
+            data-bind="attr:{src: $data}"
+            width="250" height="250"
+            alt="No picture taken." /></li>
+      </ul>
+    </div>
   </div>
 </div>

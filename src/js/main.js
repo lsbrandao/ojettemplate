@@ -25,10 +25,7 @@ requirejs.config({
     'ojL10n': 'libs/oj/v2.2.0/ojL10n',
     'ojtranslations': 'libs/oj/v2.2.0/resources',
     'text': 'libs/require/text',
-    'signals': 'libs/js-signals/signals',
-    'pouchdb': 'js/libs/pouchdb-6.3.4',
-    'pouchfind': 'js/libs/pouchdb.find',
-    'persist': 'js/libs/persist/v.1.4/min'
+    'signals': 'libs/js-signals/signals'
   }
   //endinjector
   ,
@@ -53,11 +50,10 @@ requirejs.config({
  * by the modules themselves), we are listing them explicitly to get the references to the 'oj' and 'ko'
  * objects in the callback
  */
-require(['ojs/ojcore', 'knockout', 'appController', 'pouchdb', 'ojs/ojknockout',
+require(['ojs/ojcore', 'knockout', 'appController', 'ojs/ojknockout',
     'ojs/ojmodule', 'ojs/ojrouter', 'ojs/ojnavigationlist', 'ojs/ojbutton', 'ojs/ojtoolbar'
   ],
-  function (oj, ko, app, pouchdb) { // this callback gets executed when all required modules are loaded
-    window.PouchDB = pouchdb;
+  function (oj, ko, app) { // this callback gets executed when all required modules are loaded
 
     $(function () {
 
