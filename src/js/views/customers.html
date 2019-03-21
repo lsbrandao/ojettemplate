@@ -3,34 +3,51 @@
  The Universal Permissive License (UPL), Version 1.0
 -->
 <div class="oj-panel oj-margin">
-    <h3 class="oj-header-border">Customer info</h3>
-    <div class="oj-form-layout">
-        <div class="oj-form oj-sm-odd-cols-12 oj-md-odd-cols-4 oj-md-labels-inline">
-            <div class="oj-flex">
-                <div class="oj-flex-item">
-                    <label for="txt1">Customer name</label>
-                </div>
-                <div class="oj-flex-item">
-                    <input id="txt1" data-bind="ojComponent: {component: 'ojInputText'}"/>
-                </div>
-            </div>
-            <div class="oj-flex">
-                <div class="oj-flex-item">
-                    <label for="num1">Service amount</label>
-                </div>
-                <div class="oj-flex-item">
-                    <input id="num1" data-bind="ojComponent: {component: 'ojInputNumber', 
-                                                          max:100,min:10,step:1}"/>
-                </div>
-            </div>
-            <div class="oj-flex">
-                <div class="oj-flex-item">
-                    <label for="date1" data-bind="text: $parent.dueDate"/>
-                </div>
-                <div class="oj-flex-item">
-                    <input id="date1" data-bind="ojComponent: {component: 'ojInputDate'}"/>
-                </div>
-            </div>
-        </div>
+  <h3 class="oj-header-border">Customer info</h3>
+  <div class="oj-form-layout">
+
+    <div id="page1" class="demo-page">
+      <oj-list-view
+        id="listview"
+        aria-label="drill down list"
+        data="[[dataProvider]]"
+        item.renderer="[[oj.KnockoutTemplateUtils.getRenderer('note_template', true)]]"
+        on-current-item-changed="[[gotoContent]]">
+      </oj-list-view>
     </div>
+
+    <div id="page2" class="demo-page demo-page2-hide">
+      <oj-button id="buttonIcon2" on-click="[[gotoList]]">
+        <span slot="startIcon" class="oj-fwk-icon-caret-start oj-fwk-icon"></span>
+        Back
+      </oj-button>
+      <div class="oj-panel demo-panel">
+        <div><strong>Name: </strong>
+          <span data-bind="text: first"></span>
+          <span data-bind="text: last"></span>
+        </div>
+        <div><strong>Email: </strong><span data-bind="text: email"></span></div>
+        <div><strong>Address: </strong><span data-bind="text: address"></span></div>
+        <div><strong>Balance: </strong><span data-bind="text: balance"></span></div>
+        <div><strong>Date Created: </strong><span data-bind="text: created"></span></div>
+
+      </div>
+    </div>
+
+
+    <script type="text/html" id="note_template">
+      <li data-bind="attr: {id: first}">
+        <div class="oj-flex-bar">
+          <div class="oj-flex-bar-middle oj-flex-bar">
+            <div class="oj-flex-bar-middle" style="font-weight: bold" data-bind="text: first"></div>
+            <div class="oj-flex-bar-end"><span class="oj-flex-item" data-bind="text: email"></span></div>
+          </div>
+          <div class="oj-flex-bar-end oj-sm-align-items-center">
+            <div role="presentation" class="oj-flex-item oj-fwk-icon oj-listview-drill-icon"></div>
+          </div>
+        </div>
+      </li>
+    </script>
+
+  </div>
 </div>

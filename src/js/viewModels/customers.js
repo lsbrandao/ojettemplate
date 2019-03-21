@@ -5,12 +5,64 @@
 /*
  * Your customer ViewModel code goes here
  */
-define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojdatetimepicker', 'ojs/ojinputnumber',
-    'ojs/ojinputtext'],
- function(oj, ko, $) {
-  
+define(['ojs/ojcore', 'knockout', 'jquery', 'promise', 'ojs/ojlistview', 'ojs/ojarraydataprovider', 'ojs/ojbutton', 'ojs/ojcollectiontabledatasource',
+    'ojs/ojmodel'
+  ],
+  function (oj, ko, $) {
+
     function CustomerViewModel() {
       var self = this;
+      self.dataProvider = ko.observable();
+
+      self.url = 'https://randomapi.com/api/6de6abfedb24f889e0b5f675edc50deb?fmt=raw&sole';
+
+      self.model = oj.Model.extend({
+        idAttribute: 'first'
+      });
+
+      self.collection = new oj.Collection(null, {
+        url: self.url,
+        model: self.model
+      });
+
+      self.dataProvider(new oj.CollectionTableDataSource(self.collection));
+
+      self.first = ko.observable("");
+      self.last = ko.observable("");
+      self.email = ko.observable("");
+      self.address = ko.observable("");
+      self.balance = ko.observable("");
+      self.created = ko.observable("");
+
+      this.gotoList = function (event, ui) {
+        document.getElementById("listview").currentItem = null;
+        self.slide();
+      };
+
+      this.gotoContent = function (event) {
+        // console.log(event);
+        if (event.detail.value != null) {
+          var row = self.dataProvider()[event.detail.value];
+          // console.log(self.dataProvider());
+          const models = self.collection.models;
+          const selectedModel = models.find((model) => model.id === event.detail.value);
+          console.log(selectedModel.attributes);
+          self.first(selectedModel.attributes.first);
+          self.last(selectedModel.attributes.last);
+          self.email(selectedModel.attributes.email);
+          self.address(selectedModel.attributes.address);
+          self.balance(selectedModel.attributes.balance);
+          self.created(selectedModel.attributes.created);
+          self.slide();
+        }
+      };
+
+      this.slide = function () {
+        $("#page1").toggleClass("demo-page1-hide");
+        $("#page2").toggleClass("demo-page2-hide");
+      };
+
+
       // Below are a subset of the ViewModel methods invoked by the ojModule binding
       // Please reference the ojModule jsDoc for additionaly available methods.
 
@@ -25,7 +77,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojdatetimepicker', 'ojs/ojinput
        * @return {Promise|undefined} - If the callback returns a Promise, the next phase (attaching DOM) will be delayed until
        * the promise is resolved
        */
-      self.handleActivated = function(info) {
+      self.handleActivated = function (info) {
         // Implement if needed
       };
 
@@ -38,7 +90,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojdatetimepicker', 'ojs/ojinput
        * @param {Function} info.valueAccessor - The binding's value accessor.
        * @param {boolean} info.fromCache - A boolean indicating whether the module was retrieved from cache.
        */
-      self.handleAttached = function(info) {
+      self.handleAttached = function (info) {
         // Implement if needed
       };
 
@@ -51,7 +103,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojdatetimepicker', 'ojs/ojinput
        * @param {Node} info.element - DOM element or where the binding is attached. This may be a 'virtual' element (comment node).
        * @param {Function} info.valueAccessor - The binding's value accessor.
        */
-      self.handleBindingsApplied = function(info) {
+      self.handleBindingsApplied = function (info) {
         // Implement if needed
       };
 
@@ -63,7 +115,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojdatetimepicker', 'ojs/ojinput
        * @param {Function} info.valueAccessor - The binding's value accessor.
        * @param {Array} info.cachedNodes - An Array containing cached nodes for the View if the cache is enabled.
        */
-      self.handleDetached = function(info) {
+      self.handleDetached = function (info) {
         // Implement if needed
       };
     }
