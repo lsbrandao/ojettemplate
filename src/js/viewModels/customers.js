@@ -6,7 +6,7 @@
  * Your customer ViewModel code goes here
  */
 define(['ojs/ojcore', 'knockout', 'jquery', 'promise', 'ojs/ojlistview', 'ojs/ojarraydataprovider', 'ojs/ojbutton', 'ojs/ojcollectiontabledatasource',
-    'ojs/ojmodel'
+    'ojs/ojmodel', 'ojs/ojmoduleanimations', 'ojs/ojanimation'
   ],
   function (oj, ko, $) {
 
@@ -15,6 +15,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'promise', 'ojs/ojlistview', 'ojs/oj
       self.dataProvider = ko.observable();
 
       self.url = 'https://randomapi.com/api/6de6abfedb24f889e0b5f675edc50deb?fmt=raw&sole';
+      // self.url = 'https://randomuser.me/api/?results=10';
 
       self.model = oj.Model.extend({
         idAttribute: 'first'
@@ -53,14 +54,47 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'promise', 'ojs/ojlistview', 'ojs/oj
           self.address(selectedModel.attributes.address);
           self.balance(selectedModel.attributes.balance);
           self.created(selectedModel.attributes.created);
-          self.slide();
+          self.slide('toContent');
         }
       };
 
-      this.slide = function () {
+      self.effect = ko.observable('slideOut');
+
+      this.slide = function (destination) {
         $("#page1").toggleClass("demo-page1-hide");
         $("#page2").toggleClass("demo-page2-hide");
+        if (destination === 'toContent') {
+          // oj.AnimationUtils.slideOut($('#page1')[0]);
+          oj.AnimationUtils.slideIn($('#page2')[0]);
+
+        } else {
+          // oj.AnimationUtils.slideOut($('#page2')[0]);
+          oj.AnimationUtils.slideIn($('#page1')[0], {
+            direction: 'end'
+          });
+        }
       };
+
+      self.modulePath = ko.pureComputed(
+        function () {
+          var module;
+          var effect = self.effect();
+          if (effect == 'fadeIn' || effect == 'fadeOut')
+            module = 'fade';
+          else if (effect == 'expand' || effect == 'collapse')
+            module = 'expand';
+          else if (effect == 'zoomIn' || effect == 'zoomOut')
+            module = 'zoom';
+          else if (effect == 'slideIn' || effect == 'slideOut')
+            module = 'slide';
+          else if (effect == 'flipIn' || effect == 'flipOut')
+            module = 'flip';
+          else
+            module = effect;
+
+          return ('animation/' + module);
+        }
+      );
 
 
       // Below are a subset of the ViewModel methods invoked by the ojModule binding
