@@ -1,0 +1,17 @@
+{
+    "ios": {
+        "debug": {
+            "provisioningProfile": "CMiCGlobal Development Wildcard Provisioning",
+            "developmentTeam": "4G88U8TF73",
+            "codeSignIdentity": "iPhone Developer: Luiz Brandao (S6Z596DX53)",
+            "packageType": "development"
+        },
+        "release": {
+
+            "provisioningProfile": "CMiCGlobal Development Wildcard Provisioning",
+            "developmentTeam": "4G88U8TF73",
+            "codeSignIdentity": "iPhone Developer: Luiz Brandao (S6Z596DX53)",
+            "packageType": "enterprise"
+        }
+    }
+}

@@ -6,74 +6,95 @@
  * Your customer ViewModel code goes here
  */
 define(['ojs/ojcore', 'knockout', 'jquery', 'promise', 'ojs/ojlistview', 'ojs/ojarraydataprovider', 'ojs/ojbutton', 'ojs/ojcollectiontabledatasource',
-    'ojs/ojmodel', 'ojs/ojmoduleanimations', 'ojs/ojanimation'
+    'ojs/ojmodel', 'ojs/ojmoduleanimations', 'ojs/ojanimation', 'ojs/ojavatar'
   ],
   function (oj, ko, $) {
 
     function CustomerViewModel() {
       var self = this;
+
       self.dataProvider = ko.observable();
+      self.listLength = ko.observable(0);
+      self.index = ko.observable(0);
 
-      self.url = 'https://randomapi.com/api/6de6abfedb24f889e0b5f675edc50deb?fmt=raw&sole';
-      // self.url = 'https://randomuser.me/api/?results=10';
+      // self.url = 'https://randomapi.com/api/6de6abfedb24f889e0b5f675edc50deb?fmt=raw&sole';
+      self.url = 'https://randomuser.me/api/?results=10';
 
-      self.model = oj.Model.extend({
-        idAttribute: 'first'
+      self.userModel = oj.Model.extend({
+        // parse: self.parseUsers,
+        idAttribute: 'email'
       });
 
-      self.collection = new oj.Collection(null, {
+      self.userCollection = new oj.Collection(null, {
         url: self.url,
-        model: self.model
+        model: self.userModel
       });
 
-      self.dataProvider(new oj.CollectionTableDataSource(self.collection));
+      // self.parseUsers = function (response) {
+      // console.log(response);
+      // return {
+      //   userName: response.name.first
+      // DepartmentName: response['DepartmentName'],
+      // LocationId: response['LocationId'],
+      // ManagerId: response['ManagerId']
+      // };
+      // };
+
+      self.dataProvider(new oj.CollectionTableDataSource(self.userCollection));
+
+      console.log(self.userCollection);
+
+      setTimeout(() => {
+        console.log(self.userCollection.length);
+        self.listLength(self.userCollection.length);
+      }, 11000);
 
       self.first = ko.observable("");
       self.last = ko.observable("");
       self.email = ko.observable("");
       self.address = ko.observable("");
-      self.balance = ko.observable("");
-      self.created = ko.observable("");
+      self.phone = ko.observable("");
 
-      this.gotoList = function (event, ui) {
+      self.gotoList = function (event, ui) {
         document.getElementById("listview").currentItem = null;
-        self.slide();
+        self.slide('toList');
       };
 
-      this.gotoContent = function (event) {
-        // console.log(event);
+      self.gotoContent = function (event) {
+        console.log(event);
         if (event.detail.value != null) {
-          var row = self.dataProvider()[event.detail.value];
-          // console.log(self.dataProvider());
-          const models = self.collection.models;
-          const selectedModel = models.find((model) => model.id === event.detail.value);
-          console.log(selectedModel.attributes);
-          self.first(selectedModel.attributes.first);
-          self.last(selectedModel.attributes.last);
+          const selectedModel = self.userCollection.get(event.detail.value);
+          let firstName = selectedModel.attributes.name.first;
+          const captalizedName = firstName.replace(/^\w/, c => c.toUpperCase());
+          self.first(captalizedName);
+          self.last(selectedModel.attributes.name.last);
           self.email(selectedModel.attributes.email);
-          self.address(selectedModel.attributes.address);
-          self.balance(selectedModel.attributes.balance);
-          self.created(selectedModel.attributes.created);
+          self.address(selectedModel.attributes.location.street);
+          self.phone(selectedModel.attributes.phone);
           self.slide('toContent');
         }
       };
 
       self.effect = ko.observable('slideOut');
 
-      this.slide = function (destination) {
-        $("#page1").toggleClass("demo-page1-hide");
-        $("#page2").toggleClass("demo-page2-hide");
-        if (destination === 'toContent') {
-          // oj.AnimationUtils.slideOut($('#page1')[0]);
+      self.slide = function (destination) {
+        if (destination === 'toContent' && $(window).width() < 768) {
+          self.toggleHidePages();
           oj.AnimationUtils.slideIn($('#page2')[0]);
 
-        } else {
-          // oj.AnimationUtils.slideOut($('#page2')[0]);
+        } else if (destination === 'toList' && $(window).width() < 768) {
+          self.toggleHidePages();
           oj.AnimationUtils.slideIn($('#page1')[0], {
             direction: 'end'
           });
         }
       };
+
+      self.toggleHidePages = function () {
+        $("#page1").toggleClass("demo-page1-hide");
+        $("#page2").toggleClass("oj-sm-only-hide");
+      };
+
 
       self.modulePath = ko.pureComputed(
         function () {

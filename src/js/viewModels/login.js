@@ -29,13 +29,14 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojmodel', 'oj
         self.router.configure({
           'dashboard': {
             label: 'Dashboard',
-            isDefault: true
+            isDefault: false
           },
           'incidents': {
             label: 'Incidents'
           },
           'customers': {
-            label: 'Customers'
+            label: 'Customers',
+            isDefault: true
           },
           'about': {
             label: 'About'
