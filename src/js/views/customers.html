@@ -12,15 +12,41 @@
   <div class="oj-flex oj-form-layout oj-md-flex-direction-row">
 
     <div id="page1" class="oj-flex-item oj-md-6 demo-page">
+
+      <!-- <div id="quickFilter" class="frame">
+        <oj-label id="label" class="oj-label-inline" for="filterName">Name:</oj-label>
+        <oj-input-text id="filterName" placeholder="Type to filter name"
+          on-raw-value-changed="[[filterChanged]]" value="{{filter}}"></oj-input-text>
+      </div> -->
+
       <oj-list-view
         style="height:60vh;overflow-x:hidden;"
         id="listview"
         aria-label="drill down list"
         data="[[dataProvider]]"
-        item.renderer="[[oj.KnockoutTemplateUtils.getRenderer('note_template', true)]]"
         on-current-item-changed="[[gotoContent]]"
         scroll-policy="loadMoreOnScroll"
-        scroll-policy-options.fetch-size="15">
+        scroll-policy-options.fetch-size="100"
+        scroll-policy-options.max-count="5000">
+        <template slot="itemTemplate">
+          <div class="oj-flex-bar oj-sm-align-items-center">
+            <div class="oj-flex-bar-start" style="padding-right:15px;">
+              <span data-bind="text: $current.index + 1"></span>
+              <oj-avatar role=" img" size="xs"
+                data-bind="attr:{'aria-label':'Avatar of ' + $current.data.name.first + ' ' + $current.data.name.last, 'src': $current.data.picture.thumbnail}">
+              </oj-avatar>
+            </div>
+            <div class="oj-flex oj-sm-flex-direction-column ">
+              <div class="oj-flex-bar-start" style="font-weight: bold"
+                data-bind="text: $current.data.name.first"></div>
+              <div class="oj-flex-bar-end"><span class="oj-flex-item" data-bind="text: $current.data.email"></span>
+              </div>
+            </div>
+            <div class="oj-flex-bar-end oj-sm-align-items-center">
+              <div role="presentation" class="oj-flex-item oj-fwk-icon oj-listview-drill-icon"></div>
+            </div>
+          </div>
+        </template>
       </oj-list-view>
     </div>
 
@@ -41,11 +67,11 @@
     </div>
 
 
-    <script type="text/html" id="note_template">
+    <!-- <script type="text/html" id="note_template">
       <li>
         <div class="oj-flex-bar oj-sm-align-items-center">
           <div class="oj-flex-bar-start" style="padding-right:15px;">
-            <span data-bind="text: item"></span>
+            <span data-bind="text: $parent.index"></span>
             <oj-avatar role=" img" size="xs"
               data-bind="attr:{'aria-label':'Avatar of ' + name.first + ' ' + name.last, 'src': picture.thumbnail}">
             </oj-avatar>
@@ -61,6 +87,8 @@
           </div>
         </div>
       </li>
-    </script>
+
+      item.renderer="[[oj.KnockoutTemplateUtils.getRenderer('note_template', true)]]"
+    </script> -->
 
   </div>

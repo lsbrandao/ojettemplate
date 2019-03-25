@@ -6,43 +6,73 @@
  * Your customer ViewModel code goes here
  */
 define(['ojs/ojcore', 'knockout', 'jquery', 'promise', 'ojs/ojlistview', 'ojs/ojarraydataprovider', 'ojs/ojbutton', 'ojs/ojcollectiontabledatasource',
-    'ojs/ojmodel', 'ojs/ojmoduleanimations', 'ojs/ojanimation', 'ojs/ojavatar'
+    'ojs/ojmodel', 'ojs/ojmoduleanimations', 'ojs/ojanimation', 'ojs/ojavatar', 'ojs/ojinputtext'
   ],
   function (oj, ko, $) {
 
     function CustomerViewModel() {
       var self = this;
 
-      self.dataProvider = ko.observable();
       self.listLength = ko.observable(0);
-      self.index = ko.observable(0);
 
-      // self.url = 'https://randomapi.com/api/6de6abfedb24f889e0b5f675edc50deb?fmt=raw&sole';
-      self.url = 'https://randomuser.me/api/?results=10';
+      // self.filter = ko.observable('');
+
+      // self.filterChanged = function (event) {
+      //   var filter = event.target.rawValue;
+      //   var filteredCollection = self.filteredCol();
+
+      //   if (self.originalCol == undefined && filter !== undefined) {
+      //     self.originalCol = filteredCollection.clone();
+      //   }
+
+      //   var ret = self.originalCol !== undefined ? self.originalCol.where({
+      //     name: {
+      //       value: filter,
+      //       comparator: self.nameFilter
+      //     }
+      //   }) : [];
+      //   if (ret.length == 0) {
+      //     while (!filteredCollection.isEmpty()) {
+      //       filteredCollection.pop();
+      //     }
+      //   } else {
+      //     filteredCollection.reset(ret);
+      //   }
+      // };
+
+      // self.nameFilter = function (model, attr, value) {
+      //   var name = model.get("name");
+      //   return (name.first.toLowerCase().indexOf(value.toLowerCase()) > -1);
+      // };
+
+      self.url = 'https://randomuser.me/api/?results=5000';
+      // self.filteredCol = ko.observable();
+      self.dataProvider = ko.observable();
 
       self.userModel = oj.Model.extend({
-        // parse: self.parseUsers,
         idAttribute: 'email'
       });
 
+      self.myUser = new self.userModel();
+
       self.userCollection = new oj.Collection(null, {
         url: self.url,
-        model: self.userModel
+        model: self.myUser
+        // comparator: 'email'
       });
 
-      // self.parseUsers = function (response) {
-      // console.log(response);
-      // return {
-      //   userName: response.name.first
-      // DepartmentName: response['DepartmentName'],
-      // LocationId: response['LocationId'],
-      // ManagerId: response['ManagerId']
-      // };
-      // };
+      self.userCollection.setRangeLocal(0, 100);
+
+      // self.userCollection = oj.Collection.extend({
+      //   url: self.url,
+      //   model: self.myUser,
+      //   comparator: 'email'
+      // });
+
+      // self.filteredCol(new self.userCollection());
 
       self.dataProvider(new oj.CollectionTableDataSource(self.userCollection));
 
-      console.log(self.userCollection);
 
       setTimeout(() => {
         console.log(self.userCollection.length);
@@ -171,6 +201,11 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'promise', 'ojs/ojlistview', 'ojs/oj
        * @param {Array} info.cachedNodes - An Array containing cached nodes for the View if the cache is enabled.
        */
       self.handleDetached = function (info) {
+        // Implement if needed
+      };
+
+
+      self.handleDeactivated = function (info) {
         // Implement if needed
       };
     }
