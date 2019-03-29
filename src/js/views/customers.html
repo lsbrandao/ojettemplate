@@ -7,6 +7,7 @@
     <h3 class="oj-header-border">Customer information - Items loaded: <span data-bind="text: listLength"></span>
   </div>
 
+  <oj-button id='loadlist' on-oj-action='[[onLoadList]]'>Load List</oj-button>
 
   <div class="oj-flex oj-form-layout oj-md-flex-direction-row">
 
@@ -19,7 +20,7 @@
       </div> -->
 
       <oj-list-view
-        style="height:60vh;overflow-x:hidden;"
+        style="max-height:60vh;overflow-x:hidden;"
         id="listview"
         aria-label="drill down list"
         data="[[dataProvider]]"
@@ -29,13 +30,13 @@
           <div class="oj-flex-bar oj-sm-align-items-center">
             <div class="oj-flex-bar-start" style="padding-right:15px;">
               <span data-bind="text: $current.index + 1"></span>
-              <oj-avatar role=" img" size="xs"
+              <!-- <oj-avatar role=" img" size="xs"
                 data-bind="attr:{'aria-label':'Avatar of ' + $current.data.name.first + ' ' + $current.data.name.last, 'src': $current.data.picture.thumbnail}">
-              </oj-avatar>
+              </oj-avatar> -->
             </div>
             <div class="oj-flex oj-sm-flex-direction-column ">
               <div class="oj-flex-bar-start" style="font-weight: bold"
-                data-bind="text: $current.data.name.first"></div>
+                data-bind="text: $current.data.name"></div>
               <div class="oj-flex-bar-end"><span class="oj-flex-item" data-bind="text: $current.data.email"></span>
               </div>
             </div>
@@ -50,45 +51,36 @@
       </oj-paging-control> -->
     </div>
 
-    <div id="page2" class="oj-flex-item demo-page oj-sm-only-hide">
-      <oj-button id="buttonIcon2" on-click="[[gotoList]]" class="oj-md-hide">
-        <span slot="startIcon" class="oj-fwk-icon-caret-start oj-fwk-icon"></span>
-        Back
-      </oj-button>
-      <div class="oj-panel demo-panel">
-        <div><strong>Name: </strong>
-          <span data-bind="text: first"></span>
-          <span data-bind="text: last"></span>
+    <oj-bind-if test="[[selectedModel() !== '']]">
+      <div id="page2" class="oj-flex-item demo-page oj-sm-only-hide">
+        <oj-button id="buttonIcon2" on-click="[[gotoList]]" class="oj-md-hide">
+          <span slot="startIcon" class="oj-fwk-icon-caret-start oj-fwk-icon"></span>
+          Back
+        </oj-button>
+        <div class="oj-panel demo-panel">
+          <div><strong>Name: </strong>
+            <span data-bind="text: name"></span>
+          </div>
+          <div><strong>Email: </strong><span data-bind="text: email"></span></div>
+          <div><strong>Address: </strong><span data-bind="text: address"></span></div>
         </div>
-        <div><strong>Email: </strong><span data-bind="text: email"></span></div>
-        <div><strong>Address: </strong><span data-bind="text: address"></span></div>
-        <div><strong>Phone: </strong><span data-bind="text: phone"></span></div>
+        <div>
+          <oj-button id='deleteButton' on-oj-action='[[onDelete]]'>Delete</oj-button>
+        </div>
       </div>
-    </div>
+    </oj-bind-if>
 
+  </div>
 
-    <!-- <script type="text/html" id="note_template">
-      <li>
-        <div class="oj-flex-bar oj-sm-align-items-center">
-          <div class="oj-flex-bar-start" style="padding-right:15px;">
-            <span data-bind="text: $parent.index"></span>
-            <oj-avatar role=" img" size="xs"
-              data-bind="attr:{'aria-label':'Avatar of ' + name.first + ' ' + name.last, 'src': picture.thumbnail}">
-            </oj-avatar>
-          </div>
-          <div class="oj-flex oj-sm-flex-direction-column ">
-            <div class="oj-flex-bar-start" style="font-weight: bold"
-              data-bind="text: name.first"></div>
-            <div class="oj-flex-bar-end"><span class="oj-flex-item" data-bind="text: email"></span>
-            </div>
-          </div>
-          <div class="oj-flex-bar-end oj-sm-align-items-center">
-            <div role="presentation" class="oj-flex-item oj-fwk-icon oj-listview-drill-icon"></div>
-          </div>
-        </div>
-      </li>
-
-      item.renderer="[[oj.KnockoutTemplateUtils.getRenderer('note_template', true)]]"
-    </script> -->
-
+  <br>
+  <div id="form">
+    <oj-form-layout id="form-container">
+      <oj-input-text id="nameInput" required value="{{nameInput}}" label-hint="Name"></oj-input-text>
+      <span data-bind="text: nameInput"></span>
+      <oj-input-text id="emailInput" required value="{{emailInput}}" label-hint="Email"></oj-input-text>
+      <span data-bind="text: emailInput"></span>
+      <oj-input-text id="addressInput" required value="{{addressInput}}" label-hint="Address"></oj-input-text>
+      <span data-bind="text: addressInput"></span>
+      <oj-button id='createButton' on-oj-action='[[onCreate]]'>Create</oj-button>
+    </oj-form-layout>
   </div>

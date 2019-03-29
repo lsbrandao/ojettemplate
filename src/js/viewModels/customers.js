@@ -13,10 +13,17 @@ define(['ojs/ojcore', 'knockout', 'jquery',
     'libs/persist/debug/simpleJsonShredding',
     'libs/persist/debug/queryHandlers',
     'libs/persist/debug/fetchStrategies',
-    'promise', 'ojs/ojlistview', 'ojs/ojbutton',
+    'libs/persist/debug/persistenceUtils',
+    'promise',
+    'ojs/ojlistview',
+    'ojs/ojbutton',
     'ojs/ojcollectiondataprovider',
-    'ojs/ojpagingcontrol', 'ojs/ojpagingtabledatasource', 'ojs/ojcollectionpagingdatasource',
-    'ojs/ojmodel', 'ojs/ojmoduleanimations', 'ojs/ojanimation', 'ojs/ojavatar', 'ojs/ojinputtext'
+    'ojs/ojmodel',
+    'ojs/ojmoduleanimations',
+    'ojs/ojanimation',
+    'ojs/ojavatar',
+    'ojs/ojinputtext',
+    'ojs/ojformlayout'
   ],
   function (oj, ko, $,
     persistenceStoreManager,
@@ -25,7 +32,8 @@ define(['ojs/ojcore', 'knockout', 'jquery',
     defaultResponseProxy,
     simpleJsonShredding,
     queryHandlers,
-    fetchStrategies) {
+    fetchStrategies,
+    persistenceUtils) {
 
     function CustomerViewModel() {
       var self = this;
@@ -37,27 +45,71 @@ define(['ojs/ojcore', 'knockout', 'jquery',
           })
           .then(function (registration) {
             var responseProxy = defaultResponseProxy.getResponseProxy({
+              requestHandlerOverride: {
+                handlePost: customHandlePost
+              },
               getCacheFirstStrategy: fetchStrategies.getCacheFirstStrategy(),
               jsonProcessor: {
-                shredder: simpleJsonShredding.getShredder('res', 'results'),
+                shredder: simpleJsonShredding.getShredder('users', 'id'),
                 unshredder: simpleJsonShredding.getUnshredder()
               },
-              queryHandler: queryHandlers.getSimpleQueryHandler('res')
+              queryHandler: queryHandlers.getSimpleQueryHandler('users')
             });
             var fetchListener = responseProxy.getFetchEventListener();
             registration.addEventListener('fetch', fetchListener);
           });
       });
 
+      var customHandlePost = function (request) {
+        if (persistenceManager.isOnline()) {
+          persistenceUtils.requestToJSON(request).then(function (data) {
+            var requestData = JSON.parse(data.body.text);
+
+            var newUser = Object.assign((requestData), {
+              id: self.userCollection.size() + 1
+            });
+            // console.log(requestData, newUser);
+
+            persistenceStoreManager.openStore('users').then(function (store) {
+              console.log((newUser.id).toString());
+              store.upsert((newUser.id).toString(), JSON.parse('{}'), data);
+              console.log(store.findByKey(5).then((val) => console.log(val)));
+            });
+
+            //add new user to users collection cache
+            console.log(persistenceManager.getCache());
+
+          });
+
+          var init = {
+            'status': 503,
+            'statusText': 'Edit will be processed when online'
+          };
+          return Promise.resolve(new Response(null, init));
+        } else {
+          return persistenceManager.browserFetch(request);
+        }
+      };
+
+      var handleOfflineEdit = function (request) {
+        if (!persistenceManager.isOnline()) {
+          var init = {
+            'status': 503,
+            'statusText': 'Edit will be processed when online'
+          };
+          return Promise.resolve(new Response(null, init));
+        } else {
+          return persistenceManager.browserFetch(request);
+        }
+      };
+
 
       self.dataProvider = ko.observable();
       self.listLength = ko.observable(0);
 
-      self.first = ko.observable("");
-      self.last = ko.observable("");
+      self.name = ko.observable("");
       self.email = ko.observable("");
       self.address = ko.observable("");
-      self.phone = ko.observable("");
       // self.usersArray = ko.observableArray();
 
       // self.filter = ko.observable('');
@@ -90,62 +142,90 @@ define(['ojs/ojcore', 'knockout', 'jquery',
       //   return (name.first.toLowerCase().indexOf(value.toLowerCase()) > -1);
       // };
 
-      self.url = 'https://randomuser.me/api/?results=10';
+      self.onLoadList = function () {
+        // self.url = 'https://randomuser.me/api/?results=10';
+        self.url = 'http://localhost:3000/api/employees';
 
-      // self.filteredCol = ko.observable();
+        // self.filteredCol = ko.observable();
 
-
-
-      self.userModel = oj.Model.extend({
-        idAttribute: 'cell'
-      });
-
-      self.myUser = new self.userModel();
-
-      self.userCollection = new oj.Collection(null, {
-        url: self.url,
-        model: self.myUser,
-        // comparator: 'email',
-      });
-
-      // self.filteredCol(new self.userCollection());
-
-
-      self.dataProvider = new oj.CollectionDataProvider(self.userCollection);
-
-      // self.dataProvider = new oj.PagingTableDataSource(new oj.ArrayTableDataSource(self.usersArray));
-
-      // self.dataSource = new oj.CollectionTableDataSource(self.userCollection);
-      // self.dataProvider(new oj.PagingTableDataSource(self.dataSource));
-
-
-      let fetchingInterval = setInterval(() => {
-        self.dataProvider.getTotalSize().then((value) => {
-          if (value > -1) {
-            self.listLength(value);
-            clearInterval(fetchingInterval);
-          }
+        self.userModel = oj.Model.extend({
+          idAttribute: 'id'
         });
-      }, 1000);
 
+        self.myUser = new self.userModel();
+
+        self.userCollection = new oj.Collection(null, {
+          url: self.url,
+          model: self.myUser,
+          // comparator: 'email',
+        });
+
+        // self.filteredCol(new self.userCollection());
+
+        self.dataProvider(new oj.CollectionDataProvider(self.userCollection));
+
+        let fetchingInterval = setInterval(() => {
+          self.dataProvider().getTotalSize().then((value) => {
+            if (value > -1) {
+              self.listLength(value);
+              clearInterval(fetchingInterval);
+            }
+          });
+        }, 1000);
+      };
 
       self.gotoList = function (event, ui) {
         document.getElementById("listview").currentItem = null;
         self.slide('toList');
       };
 
+      self.selectedModel = ko.observable('');
+
       self.gotoContent = function (event) {
-        console.log(event);
         if (event.detail.value != null) {
-          const selectedModel = self.userCollection.get(event.detail.value);
-          let firstName = selectedModel.attributes.name.first;
+          self.selectedModel(self.userCollection.get(event.detail.value));
+          console.log(self.selectedModel());
+          let firstName = self.selectedModel().attributes.name;
           const captalizedName = firstName.replace(/^\w/, c => c.toUpperCase());
-          self.first(captalizedName);
-          self.last(selectedModel.attributes.name.last);
-          self.email(selectedModel.attributes.email);
-          self.address(selectedModel.attributes.location.street);
-          self.phone(selectedModel.attributes.phone);
+          self.name(captalizedName);
+          self.email(self.selectedModel().attributes.email);
+          self.address(self.selectedModel().attributes.address);
           self.slide('toContent');
+        }
+      };
+
+      self.nameInput = ko.observable();
+      self.emailInput = ko.observable();
+      self.addressInput = ko.observable();
+
+      //Handle user creation
+      self.onCreate = function (event) {
+        const newUserAttrs = {
+          name: self.nameInput(),
+          email: self.emailInput(),
+          address: self.addressInput()
+        };
+        self.userCollection.create(newUserAttrs, {
+          wait: true,
+          success: function (model, response) {},
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.log('Error in Create:' + textStatus);
+          }
+        });
+        self.nameInput('');
+        self.emailInput('');
+        self.addressInput('');
+      };
+
+
+      //Handle user deletion
+      self.onDelete = function (event, data) {
+        console.log(event);
+        console.log(self.selectedModel());
+        if (self.selectedModel() !== '') {
+          self.userCollection.remove(self.selectedModel);
+          self.selectedModel().destroy();
+          self.selectedModel('');
         }
       };
 
