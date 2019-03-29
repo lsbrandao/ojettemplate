@@ -5,15 +5,60 @@
 /*
  * Your customer ViewModel code goes here
  */
-define(['ojs/ojcore', 'knockout', 'jquery', 'promise', 'ojs/ojlistview', 'ojs/ojarraydataprovider', 'ojs/ojbutton', 'ojs/ojcollectiontabledatasource',
+define(['ojs/ojcore', 'knockout', 'jquery',
+    'libs/persist/debug/persistenceStoreManager',
+    'libs/persist/debug/pouchDBPersistenceStoreFactory',
+    'libs/persist/debug/persistenceManager',
+    'libs/persist/debug/defaultResponseProxy',
+    'libs/persist/debug/simpleJsonShredding',
+    'libs/persist/debug/queryHandlers',
+    'libs/persist/debug/fetchStrategies',
+    'promise', 'ojs/ojlistview', 'ojs/ojbutton',
+    'ojs/ojcollectiondataprovider',
+    'ojs/ojpagingcontrol', 'ojs/ojpagingtabledatasource', 'ojs/ojcollectionpagingdatasource',
     'ojs/ojmodel', 'ojs/ojmoduleanimations', 'ojs/ojanimation', 'ojs/ojavatar', 'ojs/ojinputtext'
   ],
-  function (oj, ko, $) {
+  function (oj, ko, $,
+    persistenceStoreManager,
+    pouchDBPersistenceStoreFactory,
+    persistenceManager,
+    defaultResponseProxy,
+    simpleJsonShredding,
+    queryHandlers,
+    fetchStrategies) {
 
     function CustomerViewModel() {
       var self = this;
 
+      persistenceStoreManager.registerDefaultStoreFactory(pouchDBPersistenceStoreFactory);
+      persistenceManager.init().then(function () {
+        persistenceManager.register({
+            scope: '/'
+          })
+          .then(function (registration) {
+            var responseProxy = defaultResponseProxy.getResponseProxy({
+              getCacheFirstStrategy: fetchStrategies.getCacheFirstStrategy(),
+              jsonProcessor: {
+                shredder: simpleJsonShredding.getShredder('res', 'results'),
+                unshredder: simpleJsonShredding.getUnshredder()
+              },
+              queryHandler: queryHandlers.getSimpleQueryHandler('res')
+            });
+            var fetchListener = responseProxy.getFetchEventListener();
+            registration.addEventListener('fetch', fetchListener);
+          });
+      });
+
+
+      self.dataProvider = ko.observable();
       self.listLength = ko.observable(0);
+
+      self.first = ko.observable("");
+      self.last = ko.observable("");
+      self.email = ko.observable("");
+      self.address = ko.observable("");
+      self.phone = ko.observable("");
+      // self.usersArray = ko.observableArray();
 
       // self.filter = ko.observable('');
 
@@ -45,45 +90,44 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'promise', 'ojs/ojlistview', 'ojs/oj
       //   return (name.first.toLowerCase().indexOf(value.toLowerCase()) > -1);
       // };
 
-      self.url = 'https://randomuser.me/api/?results=5000';
+      self.url = 'https://randomuser.me/api/?results=10';
+
       // self.filteredCol = ko.observable();
-      self.dataProvider = ko.observable();
+
+
 
       self.userModel = oj.Model.extend({
-        idAttribute: 'email'
+        idAttribute: 'cell'
       });
 
       self.myUser = new self.userModel();
 
       self.userCollection = new oj.Collection(null, {
         url: self.url,
-        model: self.myUser
-        // comparator: 'email'
+        model: self.myUser,
+        // comparator: 'email',
       });
-
-      self.userCollection.setRangeLocal(0, 100);
-
-      // self.userCollection = oj.Collection.extend({
-      //   url: self.url,
-      //   model: self.myUser,
-      //   comparator: 'email'
-      // });
 
       // self.filteredCol(new self.userCollection());
 
-      self.dataProvider(new oj.CollectionTableDataSource(self.userCollection));
+
+      self.dataProvider = new oj.CollectionDataProvider(self.userCollection);
+
+      // self.dataProvider = new oj.PagingTableDataSource(new oj.ArrayTableDataSource(self.usersArray));
+
+      // self.dataSource = new oj.CollectionTableDataSource(self.userCollection);
+      // self.dataProvider(new oj.PagingTableDataSource(self.dataSource));
 
 
-      setTimeout(() => {
-        console.log(self.userCollection.length);
-        self.listLength(self.userCollection.length);
-      }, 11000);
+      let fetchingInterval = setInterval(() => {
+        self.dataProvider.getTotalSize().then((value) => {
+          if (value > -1) {
+            self.listLength(value);
+            clearInterval(fetchingInterval);
+          }
+        });
+      }, 1000);
 
-      self.first = ko.observable("");
-      self.last = ko.observable("");
-      self.email = ko.observable("");
-      self.address = ko.observable("");
-      self.phone = ko.observable("");
 
       self.gotoList = function (event, ui) {
         document.getElementById("listview").currentItem = null;
@@ -105,8 +149,6 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'promise', 'ojs/ojlistview', 'ojs/oj
         }
       };
 
-      self.effect = ko.observable('slideOut');
-
       self.slide = function (destination) {
         if (destination === 'toContent' && $(window).width() < 768) {
           self.toggleHidePages();
@@ -125,6 +167,7 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'promise', 'ojs/ojlistview', 'ojs/oj
         $("#page2").toggleClass("oj-sm-only-hide");
       };
 
+      self.effect = ko.observable('slideOut');
 
       self.modulePath = ko.pureComputed(
         function () {

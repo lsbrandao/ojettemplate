@@ -103,13 +103,13 @@
       "cdn": "jet",
       "cwd": "node_modules/@oracle/oraclejet/dist/js/libs/oj",
       "debug": {
-        "cwd": "debug", 
+        "cwd": "debug",
         "src": ["**"],
         "path": "libs/oj/v#{version}/debug",
         "cdnPath": "debug"
       },
       "release": {
-        "cwd": "min", 
+        "cwd": "min",
         "src": ["**"],
         "path": "libs/oj/v#{version}/min",
         "cdnPath": "min"
@@ -120,7 +120,7 @@
       "cdn": "jet",
       "cwd": "node_modules/@oracle/oraclejet/dist/js/libs/oj",
       "debug": {
-        "src":  "ojL10n.js",
+        "src": "ojL10n.js",
         "path": "libs/oj/v#{version}/ojL10n.js",
         "cdnPath": "ojL10n"
       },
@@ -135,7 +135,7 @@
       "cdn": "jet",
       "cwd": "node_modules/@oracle/oraclejet/dist/js/libs/oj/resources",
       "debug": {
-        "src":  ["**"],
+        "src": ["**"],
         "path": "libs/oj/v#{version}/resources",
         "cdnPath": "resources"
       },
@@ -150,7 +150,7 @@
       "cdn": "3rdparty",
       "cwd": "node_modules/requirejs-text",
       "debug": {
-        "src":  "text.js",
+        "src": "text.js",
         "path": "libs/require/text.js",
         "cdnPath": "require/text"
       },
@@ -165,7 +165,7 @@
       "cdn": "3rdparty",
       "cwd": "node_modules/touchr/js",
       "debug": {
-        "src":  "touchr.js",
+        "src": "touchr.js",
         "path": "libs/touchr/touchr.js",
         "cdnPath": "touchr/touchr"
       },
@@ -180,7 +180,7 @@
       "cdn": "3rdparty",
       "cwd": "node_modules/signals/dist",
       "debug": {
-        "src":  "signals.js",
+        "src": "signals.js",
         "path": "libs/js-signals/signals.js",
         "cdnPath": "js-signals/signals"
       },
@@ -195,7 +195,7 @@
       "cdn": "3rdparty",
       "cwd": "node_modules/@webcomponents/custom-elements",
       "debug": {
-        "src":  ["custom-elements.min.js", "custom-elements.min.js.map"],
+        "src": ["custom-elements.min.js", "custom-elements.min.js.map"],
         "path": "libs/webcomponents/custom-elements.min.js",
         "cdnPath": "webcomponents/custom-elements.min"
       },
@@ -210,7 +210,7 @@
       "cdn": "3rdparty",
       "cwd": "node_modules/require-css",
       "debug": {
-        "src":  ["css.js", "css-builder.js", "normalize.js"],
+        "src": ["css.js", "css-builder.js", "normalize.js"],
         "path": "libs/require-css/css.js",
         "cdnPath": "require-css/css"
       },
@@ -219,6 +219,45 @@
         "path": "libs/require-css/css.min.js",
         "cdnPath": "require-css/css.min"
       }
+    },
+
+    "pouchdb": {
+      "cdn": "",
+      "cwd": "node_modules/pouchdb/dist",
+      "debug": {
+        "path": "libs/pouchdb/dist/pouchdb.js"
+      },
+      "release": {
+        "path": "libs/pouchdb/min/pouchdb.js"
+      }
+    },
+
+    "pouchfind": {
+      "cdn": "",
+      "cwd": "node_modules/pouchdb/dist",
+      "debug": {
+        "path": "libs/pouchdb/dist/pouchdb.find.js"
+      },
+      "release": {
+        "path": "libs/pouchdb/min/pouchdb.find.js"
+      }
+    },
+
+    "offline-persistence-toolkit": {
+      "cdn": "",
+      "cwd": "node_modules/@oracle/offline-persistence-toolkit/dist",
+      "debug": {
+        "cwd": "debug",
+        "src": ["**"],
+        "path": "libs/persist/debug",
+        "cdn": ""
+      },
+      "release": {
+        "cwd": "min",
+        "src": ["**"],
+        "path": "libs/persist/min",
+        "cdn": ""
+      }
     }
   }
-} 
+}

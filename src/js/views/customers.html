@@ -5,7 +5,6 @@
 <div class="oj-panel oj-margin ">
   <div>
     <h3 class="oj-header-border">Customer information - Items loaded: <span data-bind="text: listLength"></span>
-    </h3>
   </div>
 
 
@@ -24,10 +23,8 @@
         id="listview"
         aria-label="drill down list"
         data="[[dataProvider]]"
-        on-current-item-changed="[[gotoContent]]"
-        scroll-policy="loadMoreOnScroll"
-        scroll-policy-options.fetch-size="100"
-        scroll-policy-options.max-count="5000">
+        scroll-policy-options.max-count="5000"
+        on-current-item-changed="[[gotoContent]]">
         <template slot="itemTemplate">
           <div class="oj-flex-bar oj-sm-align-items-center">
             <div class="oj-flex-bar-start" style="padding-right:15px;">
@@ -48,6 +45,9 @@
           </div>
         </template>
       </oj-list-view>
+
+      <!-- <oj-paging-control id="paging" data="[[dataProvider]]" page-size="100">
+      </oj-paging-control> -->
     </div>
 
     <div id="page2" class="oj-flex-item demo-page oj-sm-only-hide">

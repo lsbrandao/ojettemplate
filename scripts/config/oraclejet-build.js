@@ -129,11 +129,22 @@ module.exports = function () {
          // }
          copyCustomLibsToStaging: {
             fileList: [{
-               cwd: 'node_modules/@oracle/offline-persistence-toolkit/',
-               src: ['*'],
-               dest: 'web/js/libs/persist'
-            }]
-         }
+                  cwd: 'node_modules/@oracle/offline-persistence-toolkit/',
+                  src: ['*'],
+                  dest: 'web/js/libs/persist'
+               },
+               {
+                  cwd: 'node_modules/pouchdb/dist',
+                  src: ['*'],
+                  dest: 'web/js/libs/pouchdb/dist'
+               },
+               {
+                  cwd: 'node_modules/pouchdb/',
+                  src: ['*'],
+                  dest: 'web/js/libs/pouchdb/dist'
+               }
+            ]
+         },
       },
 
 
@@ -151,13 +162,6 @@ module.exports = function () {
          //   }
          //  ]
          // }
-         copyCustomLibsToStaging: {
-            fileList: [{
-               cwd: 'node_modules/@oracle/offline-persistence-toolkit/',
-               src: ['*'],
-               dest: 'web/js/libs/persist'
-            }]
-         },
       }
    };
 };

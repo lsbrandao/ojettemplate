@@ -5,12 +5,15 @@
 /*
  * Your application specific code will go here
  */
-define(['ojs/ojcore', 'knockout', 'ojs/ojrouter', 'ojs/ojknockout', 'ojs/ojarraytabledatasource',
+define(['ojs/ojcore', 'knockout', 'OfflineController', 'ojs/ojrouter', 'ojs/ojknockout', 'ojs/ojarraytabledatasource',
     'ojs/ojoffcanvas', 'ojs/ojdialog', 'ojs/ojswitch', 'ojs/ojbutton'
   ],
-  function (oj, ko) {
+  function (oj, ko, OfflineController) {
     function ControllerViewModel() {
       var self = this;
+
+      //Offline controllet
+      // self.offlineController = new OfflineController(self);
 
       // Media queries for repsonsive layouts
       var smQuery = oj.ResponsiveUtils.getFrameworkQuery(oj.ResponsiveUtils.FRAMEWORK_QUERY_KEY.SM_ONLY);
@@ -27,24 +30,12 @@ define(['ojs/ojcore', 'knockout', 'ojs/ojrouter', 'ojs/ojknockout', 'ojs/ojarray
           label: 'Login',
           isDefault: true
         }
-        // ,
-        // 'customers': {
-        //   label: 'Customers',
-        //   isDefault: true
-        // }
       });
       var navData = [{
-          name: 'Login',
-          id: 'login',
-          iconClass: 'oj-navigationlist-item-icon demo-icon-font-24'
-        }
-        // ,
-        // {
-        //   name: 'Customers',
-        //   id: 'customers',
-        //   iconClass: 'oj-navigationlist-item-icon demo-icon-font-24'
-        // }
-      ];
+        name: 'Login',
+        id: 'login',
+        iconClass: 'oj-navigationlist-item-icon demo-icon-font-24'
+      }];
 
       self.navDataSource = new oj.ArrayTableDataSource(navData, {
         idAttribute: 'id'
@@ -205,7 +196,7 @@ define(['ojs/ojcore', 'knockout', 'ojs/ojrouter', 'ojs/ojknockout', 'ojs/ojarray
 
       self.closePreferences = function () {
         $("#md1").ojDialog("close");
-      }
+      };
 
       self.link1Name = "About Oracle";
       self.link1Id = "aboutOracle";
