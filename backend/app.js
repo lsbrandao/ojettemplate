@@ -23,22 +23,22 @@ app.use(function (req, res, next) {
     next();
 });
 
-const employees = [{
+const users = [{
         id: 1,
-        name: 'employee1',
-        email: 'employee1@test.com',
+        name: 'user1',
+        email: 'user1@test.com',
         address: '123 street'
     },
     {
         id: 2,
-        name: 'employee2',
-        email: 'employee2@test.com',
+        name: 'user2',
+        email: 'user2@test.com',
         address: '123 street'
     },
     {
         id: 3,
-        name: 'employee3',
-        email: 'employee3@test.com',
+        name: 'user3',
+        email: 'user3@test.com',
         address: '123 street'
     }
 ];
@@ -47,77 +47,85 @@ app.get('/', (req, res) => {
     res.send('Home');
 });
 
-app.get('/api/employees', (req, res) => {
-    res.send(employees);
+app.get('/api/users', (req, res) => {
+    res.send(users);
 });
 
-app.get('/api/employees/:id', (req, res) => {
-    const employee = employees.find(e =>
-        e.id === parseInt(req.params.id)
+app.get('/api/users/:name', (req, res) => {
+    const user = users.find(u =>
+        u.name === req.params.name
     );
-    if (!employee) return res.status(404).send('employee not found');
-    res.send(employee);
+    if (!user) return res.status(404).send('user not found');
+    res.send(user);
 });
 
-app.post('/api/employees', (req, res) => {
+app.post('/api/users', (req, res) => {
     const {
         error
-    } = validateEmployee(req.body); // result.error
+    } = validateuser(req.body); // result.error
     if (error) return res.status(400).send(error.details[0].message); // If invalid, return 400 - Bad request
 
-    const employee = {
-        id: employees.length + 1,
+    const user = {
+        id: users.length + 1,
         name: req.body.name,
         email: req.body.email,
         address: req.body.address
     };
-    employees.push(employee);
-    res.send(employees);
+    users.push(user);
+    console.log('item posted');
+    res.send(users);
 });
 
-app.put('/api/employees/:id', (req, res) => {
-    //Look up the employee
-    const employee = employees.find(e =>
-        e.id === parseInt(req.params.id)
+app.put('/api/users', (req, res) => {
+    //Look up the user
+    const user = users.find(e =>
+        e.id === parseInt(req.body.id)
     );
-    if (!employee) return res.status(404).send('employee not found'); // If not existing, return 404
+    if (!user) return res.status(404).send('user not found'); // If not existing, return 404
 
+    console.log(req.body);
     // Validate
+    console.log(validateuser(req.body));
     const {
         error
-    } = validateEmployee(req.body); // result.error
+    } = validateuser(req.body); // result.error
 
     if (error) return res.status(400).send(error.details[0].message); // If invalid, return 400 - Bad request
 
-    // Update employee
-    employee.name = req.body.name;
+    // Update user
+    user.name = req.body.name;
+    user.email = req.body.email;
+    user.address = req.body.address;
 
-    //Return updated employee to client
-    res.send(employee);
+    //Return updated user to client
+    res.send(user);
 });
 
-app.delete('/api/employees/:id', (req, res) => {
-    //Find employee
-    const employee = employees.find(e =>
+app.delete('/api/users/:id', (req, res) => {
+    //Find user
+    const user = users.find(e =>
         e.id === parseInt(req.params.id)
     );
-    if (!employee) return res.status(404).send('employee not found'); // If not existing, return 404
+    if (!user) return res.status(404).send('user not found'); // If not existing, return 404
 
-    //Delete employee in array
-    const index = employees.indexOf(employee);
-    employees.splice(index, 1);
+    console.log(req);
 
-    res.send(employee);
+    //Delete user in array
+    const index = users.indexOf(user);
+    users.splice(index, 1);
+
+    res.send(user);
 });
 
-function validateEmployee(employee) {
+function validateuser(user) {
     const schema = {
+        id: Joi.number(),
         name: Joi.string().min(3).required(),
         email: Joi.string().required(),
         address: Joi.string().required()
     };
 
-    return Joi.validate(employee, schema);
+    return Joi.validate(user, schema);
 }
 
 // PORT

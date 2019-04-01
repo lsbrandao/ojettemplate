@@ -12,8 +12,6 @@ define(['ojs/ojcore', 'knockout', 'OfflineController', 'ojs/ojrouter', 'ojs/ojkn
     function ControllerViewModel() {
       var self = this;
 
-      //Offline controllet
-      // self.offlineController = new OfflineController(self);
 
       // Media queries for repsonsive layouts
       var smQuery = oj.ResponsiveUtils.getFrameworkQuery(oj.ResponsiveUtils.FRAMEWORK_QUERY_KEY.SM_ONLY);

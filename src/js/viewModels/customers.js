@@ -38,10 +38,17 @@ define(['ojs/ojcore', 'knockout', 'jquery',
     function CustomerViewModel() {
       var self = this;
 
+      self.dataProvider = ko.observable();
+      self.listLength = ko.observable(0);
+      self.name = ko.observable();
+      self.email = ko.observable();
+      self.address = ko.observable();
+
       persistenceStoreManager.registerDefaultStoreFactory(pouchDBPersistenceStoreFactory);
+
       persistenceManager.init().then(function () {
         persistenceManager.register({
-            scope: '/'
+            scope: '/users'
           })
           .then(function (registration) {
             var responseProxy = defaultResponseProxy.getResponseProxy({
@@ -61,23 +68,19 @@ define(['ojs/ojcore', 'knockout', 'jquery',
       });
 
       var customHandlePost = function (request) {
-        if (persistenceManager.isOnline()) {
+        if (!persistenceManager.isOnline()) {
           persistenceUtils.requestToJSON(request).then(function (data) {
             var requestData = JSON.parse(data.body.text);
 
             var newUser = Object.assign((requestData), {
               id: self.userCollection.size() + 1
             });
-            // console.log(requestData, newUser);
 
+            // add new user to store
             persistenceStoreManager.openStore('users').then(function (store) {
-              console.log((newUser.id).toString());
               store.upsert((newUser.id).toString(), JSON.parse('{}'), data);
-              console.log(store.findByKey(5).then((val) => console.log(val)));
             });
 
-            //add new user to users collection cache
-            console.log(persistenceManager.getCache());
 
           });
 
@@ -91,25 +94,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
         }
       };
 
-      var handleOfflineEdit = function (request) {
-        if (!persistenceManager.isOnline()) {
-          var init = {
-            'status': 503,
-            'statusText': 'Edit will be processed when online'
-          };
-          return Promise.resolve(new Response(null, init));
-        } else {
-          return persistenceManager.browserFetch(request);
-        }
-      };
-
-
-      self.dataProvider = ko.observable();
-      self.listLength = ko.observable(0);
-
-      self.name = ko.observable("");
-      self.email = ko.observable("");
-      self.address = ko.observable("");
+      //FILTER IMPLEMENTATION
       // self.usersArray = ko.observableArray();
 
       // self.filter = ko.observable('');
@@ -143,8 +128,9 @@ define(['ojs/ojcore', 'knockout', 'jquery',
       // };
 
       self.onLoadList = function () {
+        console.log(persistenceManager.isOnline());
         // self.url = 'https://randomuser.me/api/?results=10';
-        self.url = 'http://localhost:3000/api/employees';
+        self.url = 'http://localhost:3000/api/users';
 
         // self.filteredCol = ko.observable();
 
@@ -194,34 +180,46 @@ define(['ojs/ojcore', 'knockout', 'jquery',
         }
       };
 
-      self.nameInput = ko.observable();
-      self.emailInput = ko.observable();
-      self.addressInput = ko.observable();
-
       //Handle user creation
       self.onCreate = function (event) {
         const newUserAttrs = {
-          name: self.nameInput(),
-          email: self.emailInput(),
-          address: self.addressInput()
+          name: self.name(),
+          email: self.email(),
+          address: self.address()
         };
         self.userCollection.create(newUserAttrs, {
-          wait: true,
           success: function (model, response) {},
           error: function (jqXHR, textStatus, errorThrown) {
-            console.log('Error in Create:' + textStatus);
+            console.log('Error in Create:' + textStatus + ' - ' + errorThrown);
           }
         });
-        self.nameInput('');
-        self.emailInput('');
-        self.addressInput('');
+        self.name('');
+        self.email('');
+        self.address('');
       };
 
+      //Handle user update
+      self.onUpdate = function (event) {
+        var myModel = self.selectedModel();
+        if (self.name() != myModel.get('name') || self.email() != myModel.get('email') || self.address() != myModel.get('address') && self.name() != '') {
+          myModel.save({
+            name: self.name(),
+            email: self.email(),
+            address: self.address()
+          }, {
+            error: function (jqXHR, textStatus, errorThrown) {
+              alert("Update failed with: " + textStatus);
+              // document.getElementById("editDialog").close();
+            }
+          });
+        } else {
+          alert('Department Name is not different or the new name is not valid');
+          document.getElementById("editDialog").close();
+        }
+      };
 
       //Handle user deletion
       self.onDelete = function (event, data) {
-        console.log(event);
-        console.log(self.selectedModel());
         if (self.selectedModel() !== '') {
           self.userCollection.remove(self.selectedModel);
           self.selectedModel().destroy();

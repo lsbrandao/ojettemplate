@@ -32,11 +32,12 @@ define(['ojs/ojcore', 'knockout', 'jquery', 'ojs/ojknockout', 'ojs/ojmodel', 'oj
             isDefault: false
           },
           'incidents': {
-            label: 'Incidents'
+            label: 'Incidents',
+            isDefault: true
           },
           'customers': {
             label: 'Customers',
-            isDefault: true
+            isDefault: false
           },
           'about': {
             label: 'About'
