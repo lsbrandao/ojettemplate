@@ -45,12 +45,10 @@ define(['ojs/ojcore', 'knockout', 'jquery',
 
       self.allUsers = ko.observableArray();
       self.dataProvider = new oj.ArrayDataProvider(self.allUsers);
-
       self.searchName = ko.observable();
       self.name = ko.observable();
       self.email = ko.observable();
       self.address = ko.observable();
-
       self.selectedModel = ko.observable('');
 
       persistenceStoreManager.registerDefaultStoreFactory(pouchDBPersistenceStoreFactory);
@@ -64,7 +62,6 @@ define(['ojs/ojcore', 'knockout', 'jquery',
               requestHandlerOverride: {
                 handlePost: customHandlePost
               },
-              getCacheFirstStrategy: fetchStrategies.getCacheFirstStrategy(),
               jsonProcessor: {
                 shredder: simpleJsonShredding.getShredder('users', 'id'),
                 unshredder: simpleJsonShredding.getUnshredder()
@@ -74,6 +71,11 @@ define(['ojs/ojcore', 'knockout', 'jquery',
             var fetchListener = responseProxy.getFetchEventListener();
             registration.addEventListener('fetch', fetchListener);
           });
+
+        // handles request data before sync
+        // persistenceManager.getSyncManager().addEventListener('beforeSyncRequest', self.beforeRequestListener, '/user');
+        // handles response data after sync
+        persistenceManager.getSyncManager().addEventListener('syncRequest', self.afterRequestListener, '/user');
       });
 
       var customHandlePost = function (request) {
@@ -81,6 +83,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
           persistenceUtils.requestToJSON(request).then(function (data) {
             var requestData = JSON.parse(data.body.text);
             console.log(requestData);
+
             var newUser = Object.assign((requestData), {
               id: self.allUsers().length
             });
@@ -93,7 +96,6 @@ define(['ojs/ojcore', 'knockout', 'jquery',
               store.upsert((newUser.id).toString(), JSON.parse('{}'), newUser);
             });
           });
-
           var init = {
             'status': 503,
             'statusText': 'Edit will be processed when online'
@@ -105,12 +107,60 @@ define(['ojs/ojcore', 'knockout', 'jquery',
       };
 
       self.syncOfflineChanges = function () {
-        persistenceManager.getSyncManager().sync().then(function () {
-          console.log('SYNC DONE');
-        }, function (error) {
-          var requestId = error.requestId;
-          var response = error.response;
-          persistenceManager.getSyncManager().removeRequest(requestId);
+        // Online Replay with Conflict Resolution
+        persistenceManager.getSyncManager().getSyncLog().then(async function (data) {
+            for (var i = 0; i < data.length; i++) {
+              if (data[i].request.method === 'GET') {
+                var requestId = data[i].requestId;
+
+                await new Promise(next => {
+                  persistenceManager.getSyncManager().removeRequest(requestId).then(function (request) {
+                    console.log('SYNC CANCELLED FOR GET REQUESTS: ' + request.url);
+                    next();
+                  });
+                });
+              }
+            }
+            persistenceManager.getSyncManager().sync({
+              preflightOptionsRequest: 'disabled'
+            }).then(function () {
+              console.log('SYNC DONE');
+            }, function (error) {
+              var requestId = error.requestId;
+              console.log('SYNC FAILED: ' + requestId);
+            });
+          },
+          function (error) {
+            var statusCode = error.response.status;
+            console.log(statusCode);
+          });
+      };
+
+      self.afterRequestListener = function (event) {
+        // invoked if offline sync for request succeed, bringing back values updates in backend
+        var statusCode = event.response.status;
+        if (statusCode == 200) {
+          console.log(event.response);
+          event.response.json().then((response) => {
+            console.log(response);
+            var id = response.id;
+
+            for (var i = 0; i < self.allUsers().length; i++) {
+              if (self.allUsers()[i].id === id) {
+                self.allUsers.splice(i, 1, {
+                  id: self.allUsers()[i].id,
+                  name: self.allUsers()[i].name,
+                  email: self.allUsers()[i].email,
+                  address: self.allUsers()[i].address,
+                });
+                console.log('UPDATE SUCCEED FOR ID: ' + id);
+                break;
+              }
+            }
+          });
+        }
+        return Promise.resolve({
+          action: 'continue'
         });
       };
 

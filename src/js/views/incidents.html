@@ -79,11 +79,8 @@
     <div id="form">
         <oj-form-layout id="form-container">
             <oj-input-text id="nameInput" required value="{{name}}" label-hint="Name"></oj-input-text>
-            <span data-bind="text: name"></span>
             <oj-input-text id="emailInput" required value="{{email}}" label-hint="Email"></oj-input-text>
-            <span data-bind="text: email"></span>
             <oj-input-text id="addressInput" required value="{{address}}" label-hint="Address"></oj-input-text>
-            <span data-bind="text: address"></span>
             <div>
                 <oj-button id='createButton' on-oj-action='[[onCreate]]'>Create</oj-button>
                 <oj-button id='createButton' on-oj-action='[[onUpdate]]'>Update</oj-button>
