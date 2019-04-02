@@ -26,7 +26,15 @@ define(['ojs/ojcore', 'knockout', 'OfflineController', 'ojs/ojrouter', 'ojs/ojkn
       self.router.configure({
         'login': {
           label: 'Login',
+          isDefault: false
+        },
+        'incidents': {
+          label: 'Incidents',
           isDefault: true
+        },
+        'customers': {
+          label: 'Customers',
+          isDefault: false
         }
       });
       var navData = [{

@@ -41,13 +41,17 @@ define(['ojs/ojcore', 'knockout', 'jquery',
     function IncidentsViewModel() {
       var self = this;
 
-      self.allItems = ko.observableArray();
-      self.dataProvider = new oj.ArrayDataProvider(self.allItems);
+      window.addEventListener('online', onlineHandler);
+
+      self.allUsers = ko.observableArray();
+      self.dataProvider = new oj.ArrayDataProvider(self.allUsers);
 
       self.searchName = ko.observable();
       self.name = ko.observable();
       self.email = ko.observable();
       self.address = ko.observable();
+
+      self.selectedModel = ko.observable('');
 
       persistenceStoreManager.registerDefaultStoreFactory(pouchDBPersistenceStoreFactory);
 
@@ -57,6 +61,9 @@ define(['ojs/ojcore', 'knockout', 'jquery',
           })
           .then(function (registration) {
             var responseProxy = defaultResponseProxy.getResponseProxy({
+              requestHandlerOverride: {
+                handlePost: customHandlePost
+              },
               getCacheFirstStrategy: fetchStrategies.getCacheFirstStrategy(),
               jsonProcessor: {
                 shredder: simpleJsonShredding.getShredder('users', 'id'),
@@ -69,54 +76,22 @@ define(['ojs/ojcore', 'knockout', 'jquery',
           });
       });
 
-      self.searchData = function (event) {
-        var searchUrl = "http://localhost:3000/api/users?name=" + self.searchName();
-        $.ajax({
-          url: searchUrl,
-          type: 'GET',
-          dataType: 'json',
-          success: function (data, textStatus, jqXHR) {
-            console.log(data);
-            self.allItems(data);
-          },
-          error: function (jqXHR, textStatus, errorThrown) {
-            console.log('Fetch failed');
-          }
-        });
-        persistenceStoreManager.openStore('users').then(function (store) {
-          console.log(store);
-        });
-      };
-
-      self.fetchData = function (event) {
-        $.ajax({
-          url: 'http://localhost:3000/api/users',
-          type: 'GET',
-          dataType: 'json',
-          success: function (data, textStatus, jqXHR) {
-            self.allItems(data);
-          },
-          error: function (jqXHR, textStatus, errorThrown) {
-            console.log('Fetch failed');
-          }
-        });
-      };
-
       var customHandlePost = function (request) {
         if (!persistenceManager.isOnline()) {
           persistenceUtils.requestToJSON(request).then(function (data) {
             var requestData = JSON.parse(data.body.text);
-
+            console.log(requestData);
             var newUser = Object.assign((requestData), {
-              id: self.userCollection.size() + 1
+              id: self.allUsers().length
             });
+
+            console.log(newUser);
+            self.allUsers.push(newUser);
 
             // add new user to store
             persistenceStoreManager.openStore('users').then(function (store) {
-              store.upsert((newUser.id).toString(), JSON.parse('{}'), data);
+              store.upsert((newUser.id).toString(), JSON.parse('{}'), newUser);
             });
-
-
           });
 
           var init = {
@@ -129,55 +104,84 @@ define(['ojs/ojcore', 'knockout', 'jquery',
         }
       };
 
-      // self.onLoadList = function () {
-      //   console.log(persistenceManager.isOnline());
-      //   // self.url = 'https://randomuser.me/api/?results=10';
-      //   self.url = 'http://localhost:3000/api/users';
-
-      //   self.userModel = oj.Model.extend({
-      //     idAttribute: 'id'
-      //   });
-
-      //   self.myUser = new self.userModel();
-
-      //   self.userCollection = new oj.Collection(null, {
-      //     url: self.url,
-      //     model: self.myUser,
-      //     // comparator: 'email',
-      //   });
-      // };
-
-      self.gotoList = function (event, ui) {
-        document.getElementById("listview").currentItem = null;
-        self.slide('toList');
+      self.syncOfflineChanges = function () {
+        persistenceManager.getSyncManager().sync().then(function () {
+          console.log('SYNC DONE');
+        }, function (error) {
+          var requestId = error.requestId;
+          var response = error.response;
+          persistenceManager.getSyncManager().removeRequest(requestId);
+        });
       };
 
-      self.selectedModel = ko.observable('');
+      function onlineHandler() {
+        self.syncOfflineChanges();
+      }
 
-      self.gotoContent = function (event) {
-        console.log(event);
-        if (event.detail.value != null) {
-          self.selectedModel(self.allItems()[event.detail.value]);
-          self.name(self.selectedModel().name);
-          self.email(self.selectedModel().email);
-          self.address(self.selectedModel().address);
-          self.slide('toContent');
-        }
+      // persistenceManager.getSyncManager().addEventListener('syncRequest', self.afterRequestListener, '/users');
+
+      // self.afterRequestListener = function (event) {
+      //   var statusCode = event.response.status;
+      //   if (statusCode == 200) {
+      //     // sync is successful, do any clean up as needed.
+      //     console.log(event);
+      //   }
+      // };
+
+      self.searchData = function (event) {
+        var searchUrl = "http://localhost:3000/api/users?name=" + self.searchName();
+        $.ajax({
+          url: searchUrl,
+          type: 'GET',
+          dataType: 'json',
+          success: function (data, textStatus, jqXHR) {
+            console.log(data);
+            self.allUsers(data);
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.log(errorThrown);
+          }
+        });
+      };
+
+      self.fetchData = function (event) {
+        $.ajax({
+          url: 'http://localhost:3000/api/users',
+          type: 'GET',
+          dataType: 'json',
+          success: function (data, textStatus, jqXHR) {
+            self.allUsers(data);
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.log('errorThrown');
+          }
+        });
       };
 
       //Handle user creation
       self.onCreate = function (event) {
-        const newUserAttrs = {
+        var newUserAttrs = {
           name: self.name(),
           email: self.email(),
           address: self.address()
         };
-        self.userCollection.create(newUserAttrs, {
-          success: function (model, response) {},
+        console.log(JSON.stringify(newUserAttrs));
+
+        $.ajax({
+          type: 'POST',
+          url: 'http://localhost:3000/api/users',
+          data: JSON.stringify(newUserAttrs),
+          dataType: 'json',
+          contentType: 'application/json',
+          success: function (data, textStatus, jqXHR) {
+            console.log(data);
+            self.allUsers(data);
+          },
           error: function (jqXHR, textStatus, errorThrown) {
-            console.log('Error in Create:' + textStatus + ' - ' + errorThrown);
+            console.log(errorThrown);
           }
         });
+
         self.name('');
         self.email('');
         self.address('');
@@ -203,13 +207,47 @@ define(['ojs/ojcore', 'knockout', 'jquery',
         }
       };
 
-      //Handle user deletion
+      //Handle user delete
       self.onDelete = function (event, data) {
         if (self.selectedModel() !== '') {
-          self.userCollection.remove(self.selectedModel);
-          self.selectedModel().destroy();
-          self.selectedModel('');
+
+          console.log(self.selectedModel().id);
+
+          $.ajax({
+            type: 'DELETE',
+            url: 'http://localhost:3000/api/users/' + self.selectedModel().id,
+            success: function (data, textStatus, jqXHR) {
+              console.log(data);
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+              console.log(errorThrown);
+            }
+          });
+          self.gotoList();
+
         }
+      };
+
+
+
+      self.gotoContent = function (event) {
+        console.log(event);
+        if (event.detail.value != null) {
+          self.selectedModel(self.allUsers()[event.detail.value]);
+          self.name(self.selectedModel().name);
+          self.email(self.selectedModel().email);
+          self.address(self.selectedModel().address);
+          self.slide('toContent');
+        }
+      };
+
+      self.gotoList = function (event, ui) {
+        document.getElementById("listview").currentItem = null;
+        self.slide('toList');
+        self.name('');
+        self.email('');
+        self.address('');
       };
 
       self.slide = function (destination) {
@@ -224,6 +262,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
           });
         }
       };
+
 
       self.toggleHidePages = function () {
         $("#page1").toggleClass("demo-page1-hide");
