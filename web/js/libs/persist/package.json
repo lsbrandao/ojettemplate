@@ -1,0 +1,77 @@
+{
+  "_from": "@oracle/offline-persistence-toolkit@^1.2.5",
+  "_id": "@oracle/offline-persistence-toolkit@1.2.5",
+  "_inBundle": false,
+  "_integrity": "sha512-1Q+pNhHcpkU5DmTyHGwio5mut2SVafc9Iq2hFhzo7mkh2RLrmTQM+wwFNMLAoosko6EwS3Xu/ooA28I9TRpcug==",
+  "_location": "/@oracle/offline-persistence-toolkit",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "@oracle/offline-persistence-toolkit@^1.2.5",
+    "name": "@oracle/offline-persistence-toolkit",
+    "escapedName": "@oracle%2foffline-persistence-toolkit",
+    "scope": "@oracle",
+    "rawSpec": "^1.2.5",
+    "saveSpec": null,
+    "fetchSpec": "^1.2.5"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/@oracle/offline-persistence-toolkit/-/offline-persistence-toolkit-1.2.5.tgz",
+  "_shasum": "d3f96c404b1cbdc6478c52e9b9cf53fdb4285513",
+  "_spec": "@oracle/offline-persistence-toolkit@^1.2.5",
+  "_where": "/Users/luizbrandao/Desktop/dev/ojet/ojettemplate",
+  "author": {
+    "name": "oraclejet"
+  },
+  "bugs": {
+    "url": "https://github.com/oracle/offline-persistence-toolkit/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {},
+  "deprecated": false,
+  "description": "Offline Persistence Toolkit by Oracle Corp.",
+  "devDependencies": {
+    "eslint-plugin-react": "^6.7.1",
+    "grunt": "~0.4.5",
+    "grunt-browserify": "^5.2.0",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-qunit": "^3.1.0",
+    "grunt-contrib-rename": "^0.2.0",
+    "grunt-contrib-requirejs": "^0.4.4",
+    "grunt-contrib-uglify": "^2.0.0",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-jsdoc": "^2.1.0",
+    "grunt-run-java": "^0.1.1",
+    "grunt-string-replace": "^1.3.1",
+    "gruntify-eslint": "^3.1.0",
+    "load-grunt-tasks": "^3.5.2",
+    "pouchdb-browser": "~7.0.0",
+    "sql-where-parser": "^2.2.1"
+  },
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "files": [
+    "dist/**/*.js",
+    "docs/"
+  ],
+  "homepage": "https://github.com/oracle/offline-persistence-toolkit#readme",
+  "keywords": [
+    "offline",
+    "persistence",
+    "mobile"
+  ],
+  "license": "UPL-1.0",
+  "name": "@oracle/offline-persistence-toolkit",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oracle/offline-persistence-toolkit.git"
+  },
+  "title": "Offline Persistence Toolkit",
+  "version": "1.2.5"
+}

@@ -1,0 +1,89 @@
+<!--
+ Copyright (c) 2014, 2016, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+-->
+<div class="oj-panel oj-margin ">
+    <div>
+        <h3 class="oj-header-border">Incidents information</span>
+    </div>
+
+    <oj-button id='loadlist' on-oj-action='[[fetchData]]'>Load List</oj-button>
+    <oj-button id='bt2' on-click='[[searchData]]'>Search By Name</oj-button>
+    <oj-input-text id="it1" value="{{searchName}}"></oj-input-text>
+
+    <div class="oj-flex oj-form-layout oj-md-flex-direction-row">
+
+        <div id="page1" class="oj-flex-item oj-md-6 demo-page">
+
+            <!-- <div id="quickFilter" class="frame">
+              <oj-label id="label" class="oj-label-inline" for="filterName">Name:</oj-label>
+              <oj-input-text id="filterName" placeholder="Type to filter name"
+                on-raw-value-changed="[[filterChanged]]" value="{{filter}}"></oj-input-text>
+            </div> -->
+
+            <oj-list-view
+                style="max-height:60vh;overflow-x:hidden;"
+                id="listview"
+                aria-label="drill down list"
+                data="[[dataProvider]]"
+                scroll-policy-options.max-count="5000"
+                on-current-item-changed="[[gotoContent]]">
+                <template slot="itemTemplate">
+                    <div class="oj-flex-bar oj-sm-align-items-center">
+                        <div class="oj-flex-bar-start" style="padding-right:15px;">
+                            <span data-bind="text: $current.index + 1"></span>
+                            <!-- <oj-avatar role=" img" size="xs"
+                      data-bind="attr:{'aria-label':'Avatar of ' + $current.data.name.first + ' ' + $current.data.name.last, 'src': $current.data.picture.thumbnail}">
+                    </oj-avatar> -->
+                        </div>
+                        <div class="oj-flex oj-sm-flex-direction-column ">
+                            <div class="oj-flex-bar-start" style="font-weight: bold"
+                                data-bind="text: $current.data.name"></div>
+                            <div class="oj-flex-bar-end"><span class="oj-flex-item"
+                                    data-bind="text: $current.data.email"></span>
+                            </div>
+                        </div>
+                        <div class="oj-flex-bar-end oj-sm-align-items-center">
+                            <div role="presentation" class="oj-flex-item oj-fwk-icon oj-listview-drill-icon"></div>
+                        </div>
+                    </div>
+                </template>
+            </oj-list-view>
+
+            <!-- <oj-paging-control id="paging" data="[[dataProvider]]" page-size="100">
+            </oj-paging-control> -->
+        </div>
+
+        <oj-bind-if test="[[selectedModel() !== '']]">
+            <div id="page2" class="oj-flex-item demo-page oj-sm-only-hide">
+                <oj-button id="buttonIcon2" on-click="[[gotoList]]" class="oj-md-hide">
+                    <span slot="startIcon" class="oj-fwk-icon-caret-start oj-fwk-icon"></span>
+                    Back
+                </oj-button>
+                <div class="oj-panel demo-panel">
+                    <div><strong>Name: </strong>
+                        <span data-bind="text: name"></span>
+                    </div>
+                    <div><strong>Email: </strong><span data-bind="text: email"></span></div>
+                    <div><strong>Address: </strong><span data-bind="text: address"></span></div>
+                </div>
+                <div>
+                    <oj-button id='deleteButton' on-oj-action='[[onDelete]]'>Delete</oj-button>
+                </div>
+            </div>
+        </oj-bind-if>
+
+    </div>
+
+    <br>
+    <div id="form">
+        <oj-form-layout id="form-container">
+            <oj-input-text id="nameInput" required value="{{name}}" label-hint="Name"></oj-input-text>
+            <oj-input-text id="emailInput" required value="{{email}}" label-hint="Email"></oj-input-text>
+            <oj-input-text id="addressInput" required value="{{address}}" label-hint="Address"></oj-input-text>
+            <div>
+                <oj-button id='createButton' on-oj-action='[[onCreate]]'>Create</oj-button>
+                <oj-button id='createButton' on-oj-action='[[onUpdate]]'>Update</oj-button>
+            </div>
+        </oj-form-layout>
+    </div>
