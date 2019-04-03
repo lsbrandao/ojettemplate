@@ -185,7 +185,11 @@ define(['ojs/ojcore', 'knockout', 'jquery',
           dataType: 'json',
           success: function (data, textStatus, jqXHR) {
             console.log(data);
-            self.allUsers(data.data);
+            if (data.length > 1) {
+              self.allUsers(data);
+            } else {
+              self.allUsers(data.data);
+            }
           },
           error: function (jqXHR, textStatus, errorThrown) {
             console.log('errorThrown');
@@ -201,7 +205,11 @@ define(['ojs/ojcore', 'knockout', 'jquery',
           dataType: 'json',
           success: function (data, textStatus, jqXHR) {
             console.log(data);
-            self.allUsers(data);
+            if (data.data) {
+              self.allUsers(data.data.find(user => user.name === self.searchName()));
+            } else {
+              self.allUsers(data[0]);
+            }
           },
           error: function (jqXHR, textStatus, errorThrown) {
             console.log(errorThrown);

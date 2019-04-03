@@ -139,7 +139,7 @@ define(['./persistenceUtils', './impl/logger'], function (persistenceUtils, logg
         message: 'shredded data is not in the correct format.'
       });
     }
-    var data = valueArray[0];
+    var data = valueArray[0].data;
     // console.log(data);
     if (data && data.length === 1 && valueArray[0].resourceType === 'single') {
       return data[0];
