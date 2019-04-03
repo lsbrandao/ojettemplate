@@ -63,7 +63,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                 handlePost: customHandlePost
               },
               jsonProcessor: {
-                shredder: jsonShredding.getShredder('users', 'id'),
+                shredder: jsonShredding.getShredder('users', 'email'),
                 unshredder: jsonShredding.getUnshredder()
               },
               queryHandler: queryHandlers.getSimpleQueryHandler('users')
@@ -198,7 +198,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
       };
 
       self.searchData = function (event) {
-        var searchUrl = "http://localhost:3000/api/users?name=" + self.searchName();
+        var searchUrl = "http://localhost:3000/api/users?email=" + self.searchName();
         $.ajax({
           url: searchUrl,
           type: 'GET',
