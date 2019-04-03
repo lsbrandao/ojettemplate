@@ -10,8 +10,8 @@ define(['ojs/ojcore', 'knockout', 'jquery',
     'libs/persist/debug/pouchDBPersistenceStoreFactory',
     'libs/persist/debug/persistenceManager',
     'libs/persist/debug/defaultResponseProxy',
+    'libs/persist/debug/jsonShredding',
     'libs/persist/debug/simpleJsonShredding',
-    'libs/persist/debug/oracleRestJsonShredding',
     'libs/persist/debug/queryHandlers',
     'libs/persist/debug/fetchStrategies',
     'libs/persist/debug/persistenceUtils',
@@ -32,8 +32,8 @@ define(['ojs/ojcore', 'knockout', 'jquery',
     pouchDBPersistenceStoreFactory,
     persistenceManager,
     defaultResponseProxy,
+    jsonShredding,
     simpleJsonShredding,
-    oracleRestJsonShredding,
     queryHandlers,
     fetchStrategies,
     persistenceUtils) {
@@ -63,8 +63,8 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                 handlePost: customHandlePost
               },
               jsonProcessor: {
-                shredder: simpleJsonShredding.getShredder('users', 'id'),
-                unshredder: simpleJsonShredding.getUnshredder()
+                shredder: jsonShredding.getShredder('users', 'id'),
+                unshredder: jsonShredding.getUnshredder()
               },
               queryHandler: queryHandlers.getSimpleQueryHandler('users')
             });
@@ -107,7 +107,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
       };
 
       self.syncOfflineChanges = function () {
-        // Online Replay with Conflict Resolution
+        // Controlling online replay
         persistenceManager.getSyncManager().getSyncLog().then(async function (data) {
             for (var i = 0; i < data.length; i++) {
               if (data[i].request.method === 'GET') {
@@ -140,7 +140,6 @@ define(['ojs/ojcore', 'knockout', 'jquery',
         // invoked if offline sync for request succeed, bringing back values updates in backend
         var statusCode = event.response.status;
         if (statusCode == 200) {
-          console.log(event.response);
           event.response.json().then((response) => {
             console.log(response);
             var id = response.id;
@@ -178,6 +177,22 @@ define(['ojs/ojcore', 'knockout', 'jquery',
       //   }
       // };
 
+
+      self.fetchData = function (event) {
+        $.ajax({
+          url: 'http://localhost:3000/api/users',
+          type: 'GET',
+          dataType: 'json',
+          success: function (data, textStatus, jqXHR) {
+            console.log(data);
+            self.allUsers(data.data);
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.log('errorThrown');
+          }
+        });
+      };
+
       self.searchData = function (event) {
         var searchUrl = "http://localhost:3000/api/users?name=" + self.searchName();
         $.ajax({
@@ -190,20 +205,6 @@ define(['ojs/ojcore', 'knockout', 'jquery',
           },
           error: function (jqXHR, textStatus, errorThrown) {
             console.log(errorThrown);
-          }
-        });
-      };
-
-      self.fetchData = function (event) {
-        $.ajax({
-          url: 'http://localhost:3000/api/users',
-          type: 'GET',
-          dataType: 'json',
-          success: function (data, textStatus, jqXHR) {
-            self.allUsers(data);
-          },
-          error: function (jqXHR, textStatus, errorThrown) {
-            console.log('errorThrown');
           }
         });
       };
