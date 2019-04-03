@@ -63,7 +63,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                 handlePost: customHandlePost
               },
               jsonProcessor: {
-                shredder: jsonShredding.getShredder('users', 'email'),
+                shredder: jsonShredding.getShredder('users', 'PmpcFirstName'),
                 unshredder: jsonShredding.getUnshredder()
               },
               queryHandler: queryHandlers.getSimpleQueryHandler('users')
@@ -198,7 +198,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
       };
 
       self.searchData = function (event) {
-        var searchUrl = "http://localhost:3000/api/users?email=" + self.searchName();
+        var searchUrl = "http://localhost:3000/api/users?PmpcFirstName=" + self.searchName();
         $.ajax({
           url: searchUrl,
           type: 'GET',
@@ -206,7 +206,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
           success: function (data, textStatus, jqXHR) {
             console.log(data);
             if (data.data) {
-              self.allUsers(data.data.find(user => user.name === self.searchName()));
+              self.allUsers(data.data.find(user => user.PmpcFirstName === self.searchName()));
             } else {
               self.allUsers(data[0]);
             }
