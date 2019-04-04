@@ -25,7 +25,7 @@ define(["./defaultCacheHandler", "../persistenceStoreManager", "./logger"], func
    * @param {String} name name of the cache
    * @param {String} store name for cache storage
    */
-  function OfflineCache(name, storeName) {
+  function OfflineCache (name, storeName) {
     if (!name) {
       throw TypeError("A name must be provided to create an OfflineCache!");
     }
@@ -67,7 +67,7 @@ define(["./defaultCacheHandler", "../persistenceStoreManager", "./logger"], func
     var self = this;
     return fetch(request).then(function (response) {
       var responseClone = response.clone();
-      return self.put(request, response).then(function () {
+      return self.put(request, response).then(function(){
         Promise.resolve(responseClone);
       })
     });
@@ -122,8 +122,8 @@ define(["./defaultCacheHandler", "../persistenceStoreManager", "./logger"], func
 
     var searchCriteria = cacheHandler.constructSearchCriteria(request, options);
     var ignoreVary = (options && options.ignoreVary);
-
-    return self._getStore().then(function (store) {
+    
+    return self._getStore().then(function(store) {
       return store.find(searchCriteria);
     }).then(function (cacheEntries) {
       var matchEntry = _applyVaryForSingleMatch(ignoreVary, request, cacheEntries);
@@ -174,7 +174,7 @@ define(["./defaultCacheHandler", "../persistenceStoreManager", "./logger"], func
     var searchCriteria = cacheHandler.constructSearchCriteria(request, options);
     var ignoreVary = (options && options.ignoreVary);
 
-    return self._getStore().then(function (store) {
+    return self._getStore().then(function(store) {
       return store.find(searchCriteria);
     }).then(function (cacheEntries) {
       var responseDataArray = _applyVaryForAllMatches(ignoreVary, request, cacheEntries);
@@ -192,7 +192,7 @@ define(["./defaultCacheHandler", "../persistenceStoreManager", "./logger"], func
       }
     });
   };
-
+  
   /**
    * Return the persistent store.
    * @returns {Object} The persistent store.
@@ -216,7 +216,7 @@ define(["./defaultCacheHandler", "../persistenceStoreManager", "./logger"], func
    * @param {Array} cacheEntries An array of cache entry to be checked among.
    * @returns {Object} The first match entry.
    */
-  function _applyVaryForSingleMatch(ignoreVary, request, cacheEntries) {
+  function _applyVaryForSingleMatch (ignoreVary, request, cacheEntries) {
     if (cacheEntries && cacheEntries.length) {
       for (var index = 0; index < cacheEntries.length; index++) {
         var cacheEntry = cacheEntries[index];
@@ -237,20 +237,18 @@ define(["./defaultCacheHandler", "../persistenceStoreManager", "./logger"], func
    * @returns {Array} The array of the cache entries that match request on vary
    *                  header.
    */
-  function _applyVaryForAllMatches(ignoreVary, request, cacheEntries) {
+  function _applyVaryForAllMatches (ignoreVary, request, cacheEntries) {
     var responseDataArray = [];
     if (cacheEntries && cacheEntries.length) {
       var filteredArray = cacheEntries.filter(_filterByVary(ignoreVary, request));
-      responseDataArray = filteredArray.map(function (entry) {
-        return entry.responseData;
-      });
+      responseDataArray = filteredArray.map(function (entry) {return entry.responseData;});
     }
     return responseDataArray;
   };
 
   // callback function supplied to Array.filter() method to filter entries
   // based on vary header.
-  function _filterByVary(ignoreVary, request, propertyName) {
+  function _filterByVary (ignoreVary, request, propertyName) {
     return function (cacheValue) {
       var propertyValue;
       if (propertyName) {
@@ -263,7 +261,7 @@ define(["./defaultCacheHandler", "../persistenceStoreManager", "./logger"], func
   };
 
   // perform the vary header check.
-  function _applyVaryCheck(ignoreVary, request, cacheValue) {
+  function _applyVaryCheck (ignoreVary, request, cacheValue) {
     if (ignoreVary) {
       return true;
     }
@@ -293,8 +291,8 @@ define(["./defaultCacheHandler", "../persistenceStoreManager", "./logger"], func
         logger.log("Offline Persistence Toolkit OfflineCache: Request HTTP Vary header value: " + requestVaryHeaderValue);
         logger.log("Offline Persistence Toolkit OfflineCache: Cached HTTP Vary header value: " + cachedRequestVaryHeaderValue);
         if ((!cachedRequestVaryHeaderValue && !requestVaryHeaderValue) ||
-          (cachedRequestVaryHeaderValue && requestVaryHeaderValue &&
-            cachedRequestVaryHeaderValue === requestVaryHeaderValue)) {
+            (cachedRequestVaryHeaderValue && requestVaryHeaderValue &&
+             cachedRequestVaryHeaderValue === requestVaryHeaderValue)) {
           continue;
         } else {
           return false;
@@ -313,7 +311,7 @@ define(["./defaultCacheHandler", "../persistenceStoreManager", "./logger"], func
    *                    from responseData. The promise is resolved to undefined
    *                    if responseData is undefined.
    */
-  function _cacheEntryToResponse(responseData) {
+  function _cacheEntryToResponse (responseData) {
     if (responseData) {
       logger.log("Offline Persistence Toolkit OfflineCache: Converting cached entry to Response object");
       var promises = [];
@@ -331,7 +329,7 @@ define(["./defaultCacheHandler", "../persistenceStoreManager", "./logger"], func
     }
   };
 
-  function _cacheEntriesToResponses(responseDataArray) {
+  function _cacheEntriesToResponses (responseDataArray) {
     if (!responseDataArray || !responseDataArray.length) {
       return Promise.resolve();
     } else {
@@ -360,20 +358,20 @@ define(["./defaultCacheHandler", "../persistenceStoreManager", "./logger"], func
     promises.push(cacheHandler.shredResponse(request, response));
 
     return Promise.all(promises).then(function (results) {
-      return self._getStore().then(function (store) {
+      return self._getStore().then(function(store) {
         var requestResponsePair = results[0];
         var shreddedPayload = results[1];
         if (!shreddedPayload) {
           // this is the case where no shredder/unshredder is specified.
           return store.upsert(requestResponsePair.key,
-            requestResponsePair.metadata,
-            requestResponsePair.value);
+                                    requestResponsePair.metadata,
+                                    requestResponsePair.value);
         } else {
           var storePromises = [];
           requestResponsePair.value.responseData.bodyAbstract = _buildBodyAbstract(shreddedPayload);
           storePromises.push(store.upsert(requestResponsePair.key,
-            requestResponsePair.metadata,
-            requestResponsePair.value));
+                                                requestResponsePair.metadata,
+                                                requestResponsePair.value));
           storePromises.push(cacheHandler.cacheShreddedData(shreddedPayload));
           return Promise.all(storePromises);
         }
@@ -381,7 +379,7 @@ define(["./defaultCacheHandler", "../persistenceStoreManager", "./logger"], func
     });
   };
 
-  function _buildBodyAbstract(shreddedPayload) {
+  function _buildBodyAbstract (shreddedPayload) {
     var bodyAbstract = shreddedPayload.map(function (element) {
       return {
         name: element.name,
@@ -431,7 +429,7 @@ define(["./defaultCacheHandler", "../persistenceStoreManager", "./logger"], func
     var self = this;
 
     return self.keys(request, options).then(function (keysArray) {
-      return self._getStore().then(function (store) {
+      return self._getStore().then(function(store) {
         if (keysArray && keysArray.length) {
           var promisesArray = keysArray.map(store.removeByKey, store);
           return Promise.all(promisesArray);
@@ -481,8 +479,8 @@ define(["./defaultCacheHandler", "../persistenceStoreManager", "./logger"], func
       logger.log("Offline Persistence Toolkit OfflineCache: keys()");
     }
     var self = this;
-
-    return self._getStore().then(function (store) {
+    
+    return self._getStore().then(function(store) {
       if (request) {
         // need to match with the passed-in request.
         var searchCriteria = cacheHandler.constructSearchCriteria(request, options);
@@ -493,9 +491,7 @@ define(["./defaultCacheHandler", "../persistenceStoreManager", "./logger"], func
         return store.find(searchCriteria).then(function (dataArray) {
           if (dataArray && dataArray.length) {
             var filteredEntries = dataArray.filter(_filterByVary(ignoreVary, request, 'value'));
-            var keysArray = filteredEntries.map(function (entry) {
-              return entry.key;
-            });
+            var keysArray = filteredEntries.map(function (entry) { return entry.key;});
             return keysArray;
           } else {
             return [];
@@ -543,8 +539,8 @@ define(["./defaultCacheHandler", "../persistenceStoreManager", "./logger"], func
     var self = this;
     var searchCriteria = cacheHandler.constructSearchCriteria(request, options);
     var ignoreVary = (options && options.ignoreVary);
-
-    return self._getStore().then(function (store) {
+    
+    return self._getStore().then(function(store) {
       return store.find(searchCriteria).then(function (cacheEntries) {
         var matchEntry = _applyVaryForSingleMatch(ignoreVary, request, cacheEntries);
         return matchEntry !== null;

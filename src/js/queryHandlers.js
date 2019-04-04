@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-define(['./persistenceManager', './persistenceStoreManager', './persistenceUtils', './impl/logger', './impl/sql-where-parser.min'],
+define(['libs/persist/debug/persistenceManager', 'libs/persist/debug/persistenceStoreManager', 'libs/persist/debug/persistenceUtils', 'libs/persist/debug/impl/logger', 'libs/persist/debug/impl/sql-where-parser.min'],
   function (persistenceManager, persistenceStoreManager, persistenceUtils, logger, sqlWhereParser) {
     'use strict';
 
@@ -358,7 +358,6 @@ define(['./persistenceManager', './persistenceStoreManager', './persistenceUtils
           // then the keys in the parameter are directly mapped to the shredded
           // data fields and values to the shredded data values
           console.log(request);
-
           var limit = request.url.split('?').length;
           var reverseStr = request.url.split("").reverse().join("");
           var urlParams = reverseStr.split('?', limit - 2);
@@ -366,6 +365,7 @@ define(['./persistenceManager', './persistenceStoreManager', './persistenceUtils
           for (let i = 0; i < urlParams.length; i++) {
             urlParams[i] = urlParams[i].split("").reverse().join("");
           }
+
 
           console.log(urlParams);
 
