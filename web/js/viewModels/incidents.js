@@ -225,8 +225,9 @@ define(['ojs/ojcore', 'knockout', 'jquery',
           dataType: 'json',
           success: function (data, textStatus, jqXHR) {
             console.log(data);
-            if (data) {
-              self.allUsers(data.find(user => user.PmpcFirstName === self.searchName()));
+            if (data.data) {
+              self.allUsers(data.data);
+              // self.allUsers(data.find(user => user.PmpcFirstName === self.searchName()));
             } else {
               self.allUsers(data[0]);
             }

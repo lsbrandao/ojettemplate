@@ -131,7 +131,7 @@ define(['libs/persist/debug/persistenceUtils', 'libs/persist/debug/impl/logger']
         message: 'shredded data is not in the correct format.'
       });
     }
-    var data = valueArray[0].data;
+    var data = valueArray[0];
     if (data && data.length === 1 && valueArray[0].resourceType === 'single') {
       return data[0];
     }

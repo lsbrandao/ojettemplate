@@ -357,20 +357,28 @@ define(['libs/persist/debug/persistenceManager', 'libs/persist/debug/persistence
           // applies to all GET requests. If there are any URL query params
           // then the keys in the parameter are directly mapped to the shredded
           // data fields and values to the shredded data values
+          var newUrlParams = request.url.match(/^(?:[^?]*\?){2}/g);
           console.log(request);
-          var limit = request.url.split('?').length;
-          var reverseStr = request.url.split("").reverse().join("");
-          var urlParams = reverseStr.split('?', limit - 2);
+          var urlParams = [request.url];
 
-          for (let i = 0; i < urlParams.length; i++) {
-            urlParams[i] = urlParams[i].split("").reverse().join("");
+          if (newUrlParams) {
+            console.log(newUrlParams);
+            var urlP = request.url.split('?');
+            urlP.splice(0, 2);
+            urlP.unshift(newUrlParams[0]);
+            console.log(urlP);
+            urlParams = urlP;
           }
 
+
+          // for (let i = 0; i < urlParams.length; i++) {
+          //   urlParams[i] = urlParams[i].split("").reverse().join("");
+          // }
 
           console.log(urlParams);
 
           var findQuery = _createQueryFromUrlParams(urlParams, ignoreUrlParams);
-
+          console.log(urlParams);
           var shredder;
           var unshredder;
 
@@ -402,7 +410,6 @@ define(['libs/persist/debug/persistenceManager', 'libs/persist/debug/persistence
           queryParamsIter = _parseURLSearchParams(urlParams[1]);
         } else {
           queryParamsIter = (new URLSearchParams(urlParams[1])).entries();
-          console.log(queryParamsIter)
         }
 
         var queryParamEntry;
