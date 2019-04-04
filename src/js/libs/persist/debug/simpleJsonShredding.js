@@ -5,7 +5,7 @@
 
 define(['./persistenceUtils', './impl/logger'], function (persistenceUtils, logger) {
   'use strict';
-
+    
   /**
    * @export
    * @class simpleJsonShredding
@@ -39,58 +39,51 @@ define(['./persistenceUtils', './impl/logger'], function (persistenceUtils, logg
       logger.log("Offline Persistence Toolkit simpleJsonShredding: Shredding Response");
       var responseClone = response.clone();
       var resourceIdentifier = responseClone.headers.get('Etag');
-      console.log(responseClone.headers.get('Etag'));
       return responseClone.text().then(function (payload) {
-
         var idArray = [];
         var dataArray = [];
         var resourceType = 'collection';
-        if (payload && payload.length > 0) {
+        if (payload &&
+          payload.length > 0) {
           try {
             var payloadJson = JSON.parse(payload);
-
-            if (Array.isArray(payloadJson.data)) {
-              console.log('is array');
-              idArray = payloadJson.data.map(function (jsonEntry) {
-                console.log(jsonEntry);
+            if (Array.isArray(payloadJson)) {
+              idArray = payloadJson.map(function (jsonEntry) {
                 if (idAttr instanceof Array) {
-                  console.log('IS INSTANCE');
                   var key = [];
-                  idAttr.forEach(function (keyAttr) {
-                    console.log(jsonEntry[keyAttr]);
-                    key.push(jsonEntry[keyAttr]);
+                  idAttr.forEach(function(keyAttr) {
+                    key.push(jsonEntry[keyAttr])
                   });
                   return key;
                 } else {
                   return jsonEntry[idAttr];
                 }
               });
-              dataArray = payloadJson.data;
+              dataArray = payloadJson;
             } else {
               if (idAttr instanceof Array) {
                 var key = [];
-                idAttr.forEach(function (keyAttr) {
-                  key.push(payloadJson.data[keyAttr])
+                idAttr.forEach(function(keyAttr) {
+                  key.push(payloadJson[keyAttr])
                 });
                 idArray[0] = key;
               } else {
-                idArray[0] = payloadJson.data[idAttr];
+                idArray[0] = payloadJson[idAttr];
               }
-              dataArray[0] = payloadJson.data;
+              dataArray[0] = payloadJson;
               resourceType = 'single';
             }
           } catch (err) {
             logger.log("Offline Persistence Toolkit simpleRestJsonShredding: Error during shredding: " + err);
           }
         }
-        console.log(storeName, resourceIdentifier, idArray, dataArray, resourceType)
         return [{
-          'name': storeName,
-          'resourceIdentifier': resourceIdentifier,
-          'keys': idArray,
-          'data': dataArray,
-          'resourceType': resourceType
-        }];
+            'name': storeName,
+            'resourceIdentifier': resourceIdentifier,
+            'keys': idArray,
+            'data': dataArray,
+            'resourceType' : resourceType
+          }];
       });
     };
   };
@@ -114,13 +107,11 @@ define(['./persistenceUtils', './impl/logger'], function (persistenceUtils, logg
    */
   var getUnshredder = function () {
     return function (data, response) {
-      console.log(data);
       logger.log("Offline Persistence Toolkit simpleJsonShredding: Unshredding Response");
       return Promise.resolve().then(function () {
         var dataContent = _retrieveDataContent(data);
         return persistenceUtils.setResponsePayload(response, dataContent);
       }).then(function (response) {
-        console.log(response);
         response.headers.set('x-oracle-jscpt-cache-expiration-date', '');
         return Promise.resolve(response);
       });
@@ -133,14 +124,10 @@ define(['./persistenceUtils', './impl/logger'], function (persistenceUtils, logg
   // that store. For simple json shredder/unshredder, the valueArray should 
   // contain only one entry.
   function _retrieveDataContent(valueArray) {
-
     if (!valueArray || valueArray.length !== 1) {
-      throw new Error({
-        message: 'shredded data is not in the correct format.'
-      });
+      throw new Error({message: 'shredded data is not in the correct format.'});
     }
     var data = valueArray[0].data;
-    // console.log(data);
     if (data && data.length === 1 && valueArray[0].resourceType === 'single') {
       return data[0];
     }
@@ -152,3 +139,4 @@ define(['./persistenceUtils', './impl/logger'], function (persistenceUtils, logg
     getUnshredder: getUnshredder
   };
 });
+

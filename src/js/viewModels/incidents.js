@@ -10,7 +10,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
     'libs/persist/debug/pouchDBPersistenceStoreFactory',
     'libs/persist/debug/persistenceManager',
     'libs/persist/debug/defaultResponseProxy',
-    'libs/persist/debug/jsonShredding',
+    'jsonShredding',
     'libs/persist/debug/simpleJsonShredding',
     'libs/persist/debug/queryHandlers',
     'libs/persist/debug/fetchStrategies',
@@ -177,22 +177,46 @@ define(['ojs/ojcore', 'knockout', 'jquery',
       //   }
       // };
 
+      self.username = ko.observable("majdij");
+      self.password = ko.observable("majdi1");
+      var url = "http://dev4v10mobile.cmic.ca:7003/cmicdevv10x/WSData/jersey/pm/Pmprojectcontact/selectBetweenDates/v2?mode=init&laterThanDate=2017-09-19T13:47:00.317-04:00&earlierThanDate=2018-09-19T13:47:00.317-04:00&limit=100&rowNumber=0&";
+      basicAuth = "Basic " + window.btoa(self.username() + ":" + self.password());
+      console.log('basicAuth: ' + basicAuth);
+
+
 
       self.fetchData = function (event) {
+        // $.ajax({
+        //   url: 'http://localhost:3000/api/users',
+        //   type: 'GET',
+        //   dataType: 'json',
+        //   success: function (data, textStatus, jqXHR) {
+        //     console.log(data);
+        //     if (data.length > 1) {
+        //       self.allUsers(data);
+        //     } else {
+        //       self.allUsers(data.data);
+        //     }
+        //   },
+        //   error: function (jqXHR, textStatus, errorThrown) {
+        //     console.log('errorThrown');
+        //   }
+        // });
         $.ajax({
-          url: 'http://localhost:3000/api/users',
+          url: "http://dev4v10mobile.cmic.ca:7003/cmicdevv10x/WSData/jersey/pm/Pmprojectcontact/selectBetweenDates/v2?mode=init&laterThanDate=2017-09-19T13:47:00.317-04:00&earlierThanDate=2018-09-19T13:47:00.317-04:00&limit=100&rowNumber=0&",
           type: 'GET',
-          dataType: 'json',
-          success: function (data, textStatus, jqXHR) {
-            console.log(data);
-            if (data.length > 1) {
-              self.allUsers(data);
-            } else {
-              self.allUsers(data.data);
-            }
+          dataType: "json",
+          headers: {
+            "Authorization": "Basic bWFqZGlqOm1hamRpMQ==",
+            "x-cm-projOraseq": 20543081
           },
-          error: function (jqXHR, textStatus, errorThrown) {
-            console.log('errorThrown');
+          Accept: "application/json",
+          success: function (result) {
+            console.log('Result: ' + JSON.stringify(result));
+
+          },
+          error: function (err) {
+            console.log("failed: " + JSON.stringify(err));
           }
         });
       };

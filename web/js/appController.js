@@ -32,16 +32,18 @@ define(['ojs/ojcore', 'knockout', 'OfflineController', 'ojs/ojrouter', 'ojs/ojkn
           label: 'Incidents',
           isDefault: true
         },
-        'customers': {
-          label: 'Customers',
-          isDefault: false
-        }
       });
       var navData = [{
-        name: 'Login',
-        id: 'login',
-        iconClass: 'oj-navigationlist-item-icon demo-icon-font-24'
-      }];
+          name: 'Login',
+          id: 'login',
+          iconClass: 'oj-navigationlist-item-icon demo-icon-font-24'
+        },
+        {
+          name: 'Incidents',
+          id: 'incidents',
+          iconClass: 'oj-navigationlist-item-icon demo-icon-font-24'
+        }
+      ];
 
       self.navDataSource = new oj.ArrayTableDataSource(navData, {
         idAttribute: 'id'
