@@ -39,9 +39,7 @@ define(['libs/persist/debug/persistenceUtils', 'libs/persist/debug/impl/logger']
       logger.log("Offline Persistence Toolkit simpleJsonShredding: Shredding Response");
       var responseClone = response.clone();
       var resourceIdentifier = responseClone.headers.get('Etag');
-      console.log(responseClone.headers.get('Etag'));
       return responseClone.text().then(function (payload) {
-
         var idArray = [];
         var dataArray = [];
         var resourceType = 'collection';
@@ -50,14 +48,10 @@ define(['libs/persist/debug/persistenceUtils', 'libs/persist/debug/impl/logger']
             var payloadJson = JSON.parse(payload);
 
             if (Array.isArray(payloadJson.data)) {
-              console.log('is array');
               idArray = payloadJson.data.map(function (jsonEntry) {
-                console.log(jsonEntry);
                 if (idAttr instanceof Array) {
-                  console.log('IS INSTANCE');
                   var key = [];
                   idAttr.forEach(function (keyAttr) {
-                    console.log(jsonEntry[keyAttr]);
                     key.push(jsonEntry[keyAttr]);
                   });
                   return key;
@@ -83,7 +77,7 @@ define(['libs/persist/debug/persistenceUtils', 'libs/persist/debug/impl/logger']
             logger.log("Offline Persistence Toolkit simpleRestJsonShredding: Error during shredding: " + err);
           }
         }
-        console.log(storeName, resourceIdentifier, idArray, dataArray, resourceType)
+        console.log(storeName, resourceIdentifier, idArray, dataArray, resourceType);
         return [{
           'name': storeName,
           'resourceIdentifier': resourceIdentifier,
@@ -114,13 +108,12 @@ define(['libs/persist/debug/persistenceUtils', 'libs/persist/debug/impl/logger']
    */
   var getUnshredder = function () {
     return function (data, response) {
-      console.log(data);
+      console.log(data, 'data');
       logger.log("Offline Persistence Toolkit simpleJsonShredding: Unshredding Response");
       return Promise.resolve().then(function () {
         var dataContent = _retrieveDataContent(data);
         return persistenceUtils.setResponsePayload(response, dataContent);
       }).then(function (response) {
-        console.log(response);
         response.headers.set('x-oracle-jscpt-cache-expiration-date', '');
         return Promise.resolve(response);
       });
@@ -133,14 +126,12 @@ define(['libs/persist/debug/persistenceUtils', 'libs/persist/debug/impl/logger']
   // that store. For simple json shredder/unshredder, the valueArray should 
   // contain only one entry.
   function _retrieveDataContent(valueArray) {
-
     if (!valueArray || valueArray.length !== 1) {
       throw new Error({
         message: 'shredded data is not in the correct format.'
       });
     }
     var data = valueArray[0].data;
-    // console.log(data);
     if (data && data.length === 1 && valueArray[0].resourceType === 'single') {
       return data[0];
     }

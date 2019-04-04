@@ -55,7 +55,8 @@ define(['ojs/ojcore', 'knockout', 'jquery',
 
       persistenceManager.init().then(function () {
         persistenceManager.register({
-            scope: '/users'
+            // scope: '/users'
+            scope: 'http://dev4v10mobile.cmic.ca:7003/cmicdevv10x/WSData/jersey/pm/Pmprojectcontact/selectBetweenDates/v2'
           })
           .then(function (registration) {
             var responseProxy = defaultResponseProxy.getResponseProxy({
@@ -63,7 +64,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
                 handlePost: customHandlePost
               },
               jsonProcessor: {
-                shredder: jsonShredding.getShredder('users', 'PmpcFirstName'),
+                shredder: jsonShredding.getShredder('users', 'PmpcContactOraseq'),
                 unshredder: jsonShredding.getUnshredder()
               },
               queryHandler: queryHandlers.getSimpleQueryHandler('users')
@@ -167,22 +168,11 @@ define(['ojs/ojcore', 'knockout', 'jquery',
         self.syncOfflineChanges();
       }
 
-      // persistenceManager.getSyncManager().addEventListener('syncRequest', self.afterRequestListener, '/users');
-
-      // self.afterRequestListener = function (event) {
-      //   var statusCode = event.response.status;
-      //   if (statusCode == 200) {
-      //     // sync is successful, do any clean up as needed.
-      //     console.log(event);
-      //   }
-      // };
 
       self.username = ko.observable("majdij");
       self.password = ko.observable("majdi1");
       var url = "http://dev4v10mobile.cmic.ca:7003/cmicdevv10x/WSData/jersey/pm/Pmprojectcontact/selectBetweenDates/v2?mode=init&laterThanDate=2017-09-19T13:47:00.317-04:00&earlierThanDate=2018-09-19T13:47:00.317-04:00&limit=100&rowNumber=0&";
       basicAuth = "Basic " + window.btoa(self.username() + ":" + self.password());
-      console.log('basicAuth: ' + basicAuth);
-
 
 
       self.fetchData = function (event) {
@@ -204,6 +194,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
         // });
         $.ajax({
           url: "http://dev4v10mobile.cmic.ca:7003/cmicdevv10x/WSData/jersey/pm/Pmprojectcontact/selectBetweenDates/v2?mode=init&laterThanDate=2017-09-19T13:47:00.317-04:00&earlierThanDate=2018-09-19T13:47:00.317-04:00&limit=100&rowNumber=0&",
+          // url: 'http://localhost:3000/api/users',
           type: 'GET',
           dataType: "json",
           headers: {
@@ -211,26 +202,31 @@ define(['ojs/ojcore', 'knockout', 'jquery',
             "x-cm-projOraseq": 20543081
           },
           Accept: "application/json",
-          success: function (result) {
-            console.log('Result: ' + JSON.stringify(result));
-
+          success: function (data, textStatus, jqXHR) {
+            console.log(data);
+            if (data.length > 1) {
+              self.allUsers(data);
+            } else {
+              self.allUsers(data.data);
+            }
           },
-          error: function (err) {
-            console.log("failed: " + JSON.stringify(err));
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.log('errorThrown');
           }
         });
       };
 
       self.searchData = function (event) {
-        var searchUrl = "http://localhost:3000/api/users?PmpcFirstName=" + self.searchName();
+        var searchUrl = "http://dev4v10mobile.cmic.ca:7003/cmicdevv10x/WSData/jersey/pm/Pmprojectcontact/selectBetweenDates/v2?mode=init&laterThanDate=2017-09-19T13:47:00.317-04:00&earlierThanDate=2018-09-19T13:47:00.317-04:00&limit=100&rowNumber=0&" + "?PmpcFirstName=" + self.searchName();
+        // var searchUrl = "http://localhost:3000/api/users?PmpcFirstName=" + self.searchName();
         $.ajax({
           url: searchUrl,
           type: 'GET',
           dataType: 'json',
           success: function (data, textStatus, jqXHR) {
             console.log(data);
-            if (data.data) {
-              self.allUsers(data.data.find(user => user.PmpcFirstName === self.searchName()));
+            if (data) {
+              self.allUsers(data.find(user => user.PmpcFirstName === self.searchName()));
             } else {
               self.allUsers(data[0]);
             }
