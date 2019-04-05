@@ -171,7 +171,6 @@ define(['ojs/ojcore', 'knockout', 'jquery',
 
       self.username = ko.observable("majdij");
       self.password = ko.observable("majdi1");
-      var url = "http://dev4v10mobile.cmic.ca:7003/cmicdevv10x/WSData/jersey/pm/Pmprojectcontact/selectBetweenDates/v2?mode=init&laterThanDate=2017-09-19T13:47:00.317-04:00&earlierThanDate=2018-09-19T13:47:00.317-04:00&limit=100&rowNumber=0&";
       basicAuth = "Basic " + window.btoa(self.username() + ":" + self.password());
 
 
@@ -217,7 +216,10 @@ define(['ojs/ojcore', 'knockout', 'jquery',
       };
 
       self.searchData = function (event) {
-        var searchUrl = "http://dev4v10mobile.cmic.ca:7003/cmicdevv10x/WSData/jersey/pm/Pmprojectcontact/selectBetweenDates/v2?mode=init&laterThanDate=2017-09-19T13:47:00.317-04:00&earlierThanDate=2018-09-19T13:47:00.317-04:00&limit=100&rowNumber=0&" + "?PmpcFirstName=" + self.searchName();
+
+        var searchUrl = "http://dev4v10mobile.cmic.ca:7003/cmicdevv10x/WSData/jersey/pm/Pmprojectcontact/selectBetweenDates/v2?mode=init&laterThanDate=2017-09-19T13:47:00.317-04:00&earlierThanDate=2018-09-19T13:47:00.317-04:00&limit=100&rowNumber=0&PmpcFirstName=Teek" + self.searchName();
+
+        //var searchUrl = "http://dev4v10mobile.cmic.ca:7003/cmicdevv10x/WSData/jersey/pm/Pmprojectcontact/selectBetweenDates/v2?PmpcFirstName=" + self.searchName();
         // var searchUrl = "http://localhost:3000/api/users?PmpcFirstName=" + self.searchName();
         $.ajax({
           url: searchUrl,
