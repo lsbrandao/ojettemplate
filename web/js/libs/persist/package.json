@@ -1,28 +1,28 @@
 {
-  "_from": "@oracle/offline-persistence-toolkit@^1.2.5",
-  "_id": "@oracle/offline-persistence-toolkit@1.2.5",
+  "_from": "@oracle/offline-persistence-toolkit",
+  "_id": "@oracle/offline-persistence-toolkit@1.2.6",
   "_inBundle": false,
-  "_integrity": "sha512-1Q+pNhHcpkU5DmTyHGwio5mut2SVafc9Iq2hFhzo7mkh2RLrmTQM+wwFNMLAoosko6EwS3Xu/ooA28I9TRpcug==",
+  "_integrity": "sha512-xAkwa6XGXgPvIgKqOpBpVfo7kYiPrnxUp8nwet5tT0zo5uEaPr7s+mZoo3LuWWjb7xZL0Aclc4pY5lvnWAq9Hg==",
   "_location": "/@oracle/offline-persistence-toolkit",
   "_phantomChildren": {},
   "_requested": {
-    "type": "range",
+    "type": "tag",
     "registry": true,
-    "raw": "@oracle/offline-persistence-toolkit@^1.2.5",
+    "raw": "@oracle/offline-persistence-toolkit",
     "name": "@oracle/offline-persistence-toolkit",
     "escapedName": "@oracle%2foffline-persistence-toolkit",
     "scope": "@oracle",
-    "rawSpec": "^1.2.5",
+    "rawSpec": "",
     "saveSpec": null,
-    "fetchSpec": "^1.2.5"
+    "fetchSpec": "latest"
   },
   "_requiredBy": [
     "#USER",
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/@oracle/offline-persistence-toolkit/-/offline-persistence-toolkit-1.2.5.tgz",
-  "_shasum": "d3f96c404b1cbdc6478c52e9b9cf53fdb4285513",
-  "_spec": "@oracle/offline-persistence-toolkit@^1.2.5",
+  "_resolved": "https://registry.npmjs.org/@oracle/offline-persistence-toolkit/-/offline-persistence-toolkit-1.2.6.tgz",
+  "_shasum": "3ecae7a6fbedf265f8249ec6aeb2635b0e293494",
+  "_spec": "@oracle/offline-persistence-toolkit",
   "_where": "/Users/luizbrandao/Desktop/dev/ojet/ojettemplate",
   "author": {
     "name": "oraclejet"
@@ -73,5 +73,5 @@
     "url": "git+https://github.com/oracle/offline-persistence-toolkit.git"
   },
   "title": "Offline Persistence Toolkit",
-  "version": "1.2.5"
+  "version": "1.2.6"
 }

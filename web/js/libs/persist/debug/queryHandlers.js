@@ -132,20 +132,25 @@ define(['./persistenceManager', './persistenceStoreManager', './persistenceUtils
       }).then(function (hasMatch) {
         return persistenceStoreManager.openStore(storeName).then(function (store) {
           if (hasMatch) {
+            console.log('hasmatch')
             // check if it's a single row query. If so then we don't need to
             // do a find.
             return persistenceManager.getCache().match(request, {
               ignoreSearch: true
             }).then(function (response) {
+              console.log(response, 'response');
               if (response.headers.get('x-oracle-jscpt-resource-type') === 'single') {
                 return Promise.resolve();
               } else {
                 // query in the shredded data
+                console.log('shredded data');
+                console.log(findQuery);
                 return store.find(findQuery);
               }
             });
           } else {
             // this might be a single row query so we need to parse the URL for an id based query
+            console.log('single row query')
             var id = _getRequestUrlId(request);
             if (id) {
               return store.findByKey(id);
@@ -357,18 +362,7 @@ define(['./persistenceManager', './persistenceStoreManager', './persistenceUtils
           // applies to all GET requests. If there are any URL query params
           // then the keys in the parameter are directly mapped to the shredded
           // data fields and values to the shredded data values
-          console.log(request);
-
-          var limit = request.url.split('?').length;
-          var reverseStr = request.url.split("").reverse().join("");
-          var urlParams = reverseStr.split('?', limit - 2);
-
-          for (let i = 0; i < urlParams.length; i++) {
-            urlParams[i] = urlParams[i].split("").reverse().join("");
-          }
-
-          console.log(urlParams);
-
+          var urlParams = request.url.split('?');
           var findQuery = _createQueryFromUrlParams(urlParams, ignoreUrlParams);
 
           var shredder;
@@ -381,6 +375,7 @@ define(['./persistenceManager', './persistenceStoreManager', './persistenceUtils
 
           if (shredder != null &&
             unshredder != null) {
+            console.log(request, storeName, findQuery);
             return _processQuery(request, storeName, findQuery, shredder, unshredder);
           }
         }
@@ -402,7 +397,6 @@ define(['./persistenceManager', './persistenceStoreManager', './persistenceUtils
           queryParamsIter = _parseURLSearchParams(urlParams[1]);
         } else {
           queryParamsIter = (new URLSearchParams(urlParams[1])).entries();
-          console.log(queryParamsIter)
         }
 
         var queryParamEntry;

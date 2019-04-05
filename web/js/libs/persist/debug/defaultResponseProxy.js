@@ -4,7 +4,8 @@
  */
 
 define(['./persistenceManager', './persistenceUtils', './fetchStrategies',
-  './cacheStrategies', './persistenceStoreManager', './impl/defaultCacheHandler', './impl/logger'],
+    './cacheStrategies', './persistenceStoreManager', './impl/defaultCacheHandler', './impl/logger'
+  ],
   function (persistenceManager, persistenceUtils, fetchStrategies,
     cacheStrategies, persistenceStoreManager, cacheHandler, logger) {
     'use strict';
@@ -54,7 +55,7 @@ define(['./persistenceManager', './persistenceUtils', './fetchStrategies',
       });
     };
 
-     /**
+    /**
      * Return an instance of the default response proxy
      * @method
      * @name getResponseProxy
@@ -166,12 +167,12 @@ define(['./persistenceManager', './persistenceUtils', './fetchStrategies',
           resolve(localVars.response);
         }).catch(function (err) {
           logger.log("Offline Persistence Toolkit DefaultResponseProxy: Insert Response in syncManager after error for request with enpointKey: " + endpointKey);
-          _insertSyncManagerRequest(requestClone, null, true).then(function() {
+          _insertSyncManagerRequest(requestClone, null, true).then(function () {
             cacheHandler.unregisterEndpointOptions(endpointKey);
-            reject(err); 
-          }, function() {
+            reject(err);
+          }, function () {
             cacheHandler.unregisterEndpointOptions(endpointKey);
-            reject(err); 
+            reject(err);
           });
         });
       });
@@ -219,7 +220,10 @@ define(['./persistenceManager', './persistenceUtils', './fetchStrategies',
 
     function _handleRequestWithErrorIfOffline(request) {
       if (!persistenceManager.isOnline()) {
-        var init = {'status': 503, 'statusText': 'Must provide handlePost override for offline'};
+        var init = {
+          'status': 503,
+          'statusText': 'Must provide handlePost override for offline'
+        };
         return Promise.resolve(new Response(null, init));
       } else {
         return persistenceManager.browserFetch(request);
@@ -249,7 +253,7 @@ define(['./persistenceManager', './persistenceUtils', './fetchStrategies',
 
       return fetchStrategy(request, self._options);
     };
-    
+
     /**
      * The default HEAD request handler.
      * Processes the HEAD Request using the default logic. Can be overrided to provide
@@ -266,7 +270,7 @@ define(['./persistenceManager', './persistenceUtils', './fetchStrategies',
       logger.log("Offline Persistence Toolkit DefaultResponseProxy: Processing Request with default HEAD Handler");
       return _handleGetWithFetchStrategy(this, request);
     };
-    
+
     /**
      * The default OPTIONS request handler.
      * The default implementation when offline will return a Response with
@@ -492,7 +496,9 @@ define(['./persistenceManager', './persistenceUtils', './fetchStrategies',
     function _insertSyncManagerRequest(request, undoRedoDataArray, force) {
       if (!persistenceManager.isOnline() || force) {
         // put the request in the sync manager if offline or if force is true
-        return persistenceManager.getSyncManager().insertRequest(request, {'undoRedoDataArray': undoRedoDataArray});
+        return persistenceManager.getSyncManager().insertRequest(request, {
+          'undoRedoDataArray': undoRedoDataArray
+        });
       }
       return Promise.resolve();
     };
@@ -564,11 +570,19 @@ define(['./persistenceManager', './persistenceUtils', './fetchStrategies',
           // find the existing data so we can get the undo data
           return persistenceStoreManager.openStore(storename).then(function (store) {
             return store.findByKey(key).then(function (undoRow) {
-              undoRedoArray.push({'key': key, 'undo': undoRow, 'redo': value});
+              undoRedoArray.push({
+                'key': key,
+                'undo': undoRow,
+                'redo': value
+              });
               return undoRedoData(++i, dataArray);
             }, function (error) {
               // if there is no existing data then undo is null
-              undoRedoArray.push({'key': key, 'undo': null, 'redo': value});
+              undoRedoArray.push({
+                'key': key,
+                'undo': null,
+                'redo': value
+              });
               return undoRedoData(++i, dataArray);
             });
           });
@@ -585,7 +599,11 @@ define(['./persistenceManager', './persistenceUtils', './fetchStrategies',
         return store.upsertAll(shreddedDataItem);
       }).then(function () {
         if (undoRedoArray.length > 0) {
-          return {'storeName': storename, 'operation': 'upsert', 'undoRedoData': undoRedoArray};
+          return {
+            'storeName': storename,
+            'operation': 'upsert',
+            'undoRedoData': undoRedoArray
+          };
         } else {
           return null;
         }
@@ -598,13 +616,18 @@ define(['./persistenceManager', './persistenceUtils', './fetchStrategies',
         return store.removeByKey(shreddedDataItem[0]['key']);
       }).then(function () {
         if (undoRedoArray.length > 0) {
-          return {'storeName': storename, 'operation': 'remove', 'undoRedoData': undoRedoArray};
+          return {
+            'storeName': storename,
+            'operation': 'remove',
+            'undoRedoData': undoRedoArray
+          };
         } else {
           return null;
         }
       });
     };
 
-    return {'getResponseProxy': getResponseProxy};
+    return {
+      'getResponseProxy': getResponseProxy
+    };
   });
-

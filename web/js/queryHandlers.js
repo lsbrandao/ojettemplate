@@ -357,20 +357,18 @@ define(['libs/persist/debug/persistenceManager', 'libs/persist/debug/persistence
           // applies to all GET requests. If there are any URL query params
           // then the keys in the parameter are directly mapped to the shredded
           // data fields and values to the shredded data values
-          // var newUrlParams = request.url.match(/^(?:[^?]*\?){2}/g);
           console.log(request);
-          var urlReqParams = request.url.split('&');
-          // var newUrlParams = urlReqParams[urlReqParams.length - 1];
+          var urlParams = request.url.split('?');
+          // var searchItemIndex = urlParams.length - 1;
 
-          console.log(urlReqParams);
-
-
-          var urlParams = [request.url];
-
-          if (urlReqParams.length > 5) {
-            urlParams.push(urlReqParams[urlReqParams.length - 1]);
-          }
-
+          // if (urlParams.length > 1) {
+          //   var urlRequest = request.url.match(/^(?:[^&]*\&){2}/g);
+          //   if (urlRequest) {
+          //     urlRequest.push(urlParams[searchItemIndex]);
+          //   }
+          //   console.log(urlRequest);
+          //   urlParams = urlRequest;
+          // }
 
           var findQuery = _createQueryFromUrlParams(urlParams, ignoreUrlParams);
           console.log(urlParams);
