@@ -49,7 +49,7 @@ define(['libs/persist/debug/persistenceUtils', 'libs/persist/debug/impl/logger']
             var payloadJson = JSON.parse(payload);
             if (Array.isArray(payloadJson.data)) {
               idArray = payloadJson.data.map(function (jsonEntry) {
-                jsonEntry.firstName = jsonEntry.name.first;
+
                 if (idAttr instanceof Array) {
                   var key = [];
                   idAttr.forEach(function (keyAttr) {
@@ -78,6 +78,7 @@ define(['libs/persist/debug/persistenceUtils', 'libs/persist/debug/impl/logger']
             logger.log("Offline Persistence Toolkit simpleRestJsonShredding: Error during shredding: " + err);
           }
         }
+        console.log(storeName, resourceIdentifier, idArray, dataArray, resourceType);
         return [{
           'name': storeName,
           'resourceIdentifier': resourceIdentifier,
@@ -110,9 +111,7 @@ define(['libs/persist/debug/persistenceUtils', 'libs/persist/debug/impl/logger']
     return function (data, response) {
       logger.log("Offline Persistence Toolkit simpleJsonShredding: Unshredding Response");
       return Promise.resolve().then(function () {
-        console.log(data)
         var dataContent = _retrieveDataContent(data);
-        console.log(response, dataContent)
         return persistenceUtils.setResponsePayload(response, dataContent);
       }).then(function (response) {
         response.headers.set('x-oracle-jscpt-cache-expiration-date', '');
