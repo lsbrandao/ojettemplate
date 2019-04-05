@@ -191,9 +191,10 @@ define(['ojs/ojcore', 'knockout', 'jquery',
         //     console.log('errorThrown');
         //   }
         // });
+        var url = persistenceManager.isOnline() ? 'http://localhost:3000/api/users?gender=female&minage=20' : 'http://localhost:3000/api/users';
         $.ajax({
           // url: "http://dev4v10mobile.cmic.ca:7003/cmicdevv10x/WSData/jersey/pm/Pmprojectcontact/selectBetweenDates/v2?mode=init&laterThanDate=2017-09-19T13:47:00.317-04:00&earlierThanDate=2018-09-19T13:47:00.317-04:00&limit=100&rowNumber=0&",
-          url: 'http://localhost:3000/api/users?gender=female&minage=20',
+          url: url,
           type: 'GET',
           dataType: "json",
           headers: {
@@ -220,8 +221,7 @@ define(['ojs/ojcore', 'knockout', 'jquery',
         // var searchUrl = "http://dev4v10mobile.cmic.ca:7003/cmicdevv10x/WSData/jersey/pm/Pmprojectcontact/selectBetweenDates/v2?mode=init&laterThanDate=2017-09-19T13:47:00.317-04:00&earlierThanDate=2018-09-19T13:47:00.317-04:00&limit=100&rowNumber=0&PmpcFirstName=Teek" + self.searchName();
 
         //var searchUrl = "http://dev4v10mobile.cmic.ca:7003/cmicdevv10x/WSData/jersey/pm/Pmprojectcontact/selectBetweenDates/v2?PmpcFirstName=" + self.searchName();
-        var searchUrl = "http://localhost:3000/api/users";
-        // ?firstName=" + self.searchName();
+        var searchUrl = "http://localhost:3000/api/users?firstName=" + self.searchName();
         $.ajax({
           url: searchUrl,
           type: 'GET',
