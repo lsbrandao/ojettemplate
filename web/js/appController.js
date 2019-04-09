@@ -24,26 +24,16 @@ define(['ojs/ojcore', 'knockout', 'OfflineController', 'ojs/ojrouter', 'ojs/ojkn
       oj.Router.defaults['urlAdapter'] = new oj.Router.urlParamAdapter();
 
       self.router.configure({
-        'login': {
-          label: 'Login',
-          isDefault: false
-        },
-        'incidents': {
-          label: 'Incidents',
+        'dashboard': {
+          label: 'Dashboard',
           isDefault: true
-        },
+        }
       });
       var navData = [{
-          name: 'Login',
-          id: 'login',
-          iconClass: 'oj-navigationlist-item-icon demo-icon-font-24'
-        },
-        {
-          name: 'Incidents',
-          id: 'incidents',
-          iconClass: 'oj-navigationlist-item-icon demo-icon-font-24'
-        }
-      ];
+        name: 'Login',
+        id: 'login',
+        iconClass: 'oj-navigationlist-item-icon demo-icon-font-24'
+      }, ];
 
       self.navDataSource = new oj.ArrayTableDataSource(navData, {
         idAttribute: 'id'

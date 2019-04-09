@@ -1,5 +1,11 @@
 {
-  "_from": "pouchdb",
+  "_args": [
+    [
+      "pouchdb@7.0.0",
+      "/Users/luizbrandao/Desktop/dev/ojet/ojettemplate"
+    ]
+  ],
+  "_from": "pouchdb@7.0.0",
   "_id": "pouchdb@7.0.0",
   "_inBundle": false,
   "_integrity": "sha512-vVZyn6SmVxYLbUmzQwU5nW1APIq/sAJ13DlYZqIJRJUUUtGy3X0F79G9/3d9StvJwfWBA/aMGPnRV2eQAp+MKA==",
@@ -9,22 +15,20 @@
     "inherits": "2.0.3"
   },
   "_requested": {
-    "type": "tag",
+    "type": "version",
     "registry": true,
-    "raw": "pouchdb",
+    "raw": "pouchdb@7.0.0",
     "name": "pouchdb",
     "escapedName": "pouchdb",
-    "rawSpec": "",
+    "rawSpec": "7.0.0",
     "saveSpec": null,
-    "fetchSpec": "latest"
+    "fetchSpec": "7.0.0"
   },
   "_requiredBy": [
-    "#USER",
     "/"
   ],
   "_resolved": "https://registry.npmjs.org/pouchdb/-/pouchdb-7.0.0.tgz",
-  "_shasum": "e95df9ef87127d0ea90222d073794bcb47c38648",
-  "_spec": "pouchdb",
+  "_spec": "7.0.0",
   "_where": "/Users/luizbrandao/Desktop/dev/ojet/ojettemplate",
   "author": {
     "name": "Dale Harvey",
@@ -37,7 +41,6 @@
   "bugs": {
     "url": "https://github.com/pouchdb/pouchdb/issues"
   },
-  "bundleDependencies": false,
   "dependencies": {
     "argsarray": "0.0.1",
     "buffer-from": "1.1.0",
@@ -59,7 +62,6 @@
     "uuid": "3.2.1",
     "vuvuzela": "1.0.3"
   },
-  "deprecated": false,
   "description": "PouchDB is a pocket-sized database",
   "files": [
     "lib",

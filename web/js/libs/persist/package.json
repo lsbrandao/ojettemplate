@@ -1,28 +1,32 @@
 {
-  "_from": "@oracle/offline-persistence-toolkit",
+  "_args": [
+    [
+      "@oracle/offline-persistence-toolkit@1.2.6",
+      "/Users/luizbrandao/Desktop/dev/ojet/ojettemplate"
+    ]
+  ],
+  "_from": "@oracle/offline-persistence-toolkit@1.2.6",
   "_id": "@oracle/offline-persistence-toolkit@1.2.6",
   "_inBundle": false,
   "_integrity": "sha512-xAkwa6XGXgPvIgKqOpBpVfo7kYiPrnxUp8nwet5tT0zo5uEaPr7s+mZoo3LuWWjb7xZL0Aclc4pY5lvnWAq9Hg==",
   "_location": "/@oracle/offline-persistence-toolkit",
   "_phantomChildren": {},
   "_requested": {
-    "type": "tag",
+    "type": "version",
     "registry": true,
-    "raw": "@oracle/offline-persistence-toolkit",
+    "raw": "@oracle/offline-persistence-toolkit@1.2.6",
     "name": "@oracle/offline-persistence-toolkit",
     "escapedName": "@oracle%2foffline-persistence-toolkit",
     "scope": "@oracle",
-    "rawSpec": "",
+    "rawSpec": "1.2.6",
     "saveSpec": null,
-    "fetchSpec": "latest"
+    "fetchSpec": "1.2.6"
   },
   "_requiredBy": [
-    "#USER",
     "/"
   ],
   "_resolved": "https://registry.npmjs.org/@oracle/offline-persistence-toolkit/-/offline-persistence-toolkit-1.2.6.tgz",
-  "_shasum": "3ecae7a6fbedf265f8249ec6aeb2635b0e293494",
-  "_spec": "@oracle/offline-persistence-toolkit",
+  "_spec": "1.2.6",
   "_where": "/Users/luizbrandao/Desktop/dev/ojet/ojettemplate",
   "author": {
     "name": "oraclejet"
@@ -30,9 +34,7 @@
   "bugs": {
     "url": "https://github.com/oracle/offline-persistence-toolkit/issues"
   },
-  "bundleDependencies": false,
   "dependencies": {},
-  "deprecated": false,
   "description": "Offline Persistence Toolkit by Oracle Corp.",
   "devDependencies": {
     "eslint-plugin-react": "^6.7.1",

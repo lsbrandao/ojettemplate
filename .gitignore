@@ -5,6 +5,7 @@
 /hybrid/node_modules
 /hybrid/platforms
 /hybrid/www/*
+/web
 
 !hybrid/plugins
 hybrid/plugins/*

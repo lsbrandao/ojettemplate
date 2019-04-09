@@ -6,14 +6,14 @@
 define(['./persistenceManager', './persistenceStoreManager', './persistenceUtils', './impl/logger', './impl/sql-where-parser.min'],
   function (persistenceManager, persistenceStoreManager, persistenceUtils, logger, sqlWhereParser) {
     'use strict';
-
+  
     /**
      * @class queryHandlers
      * @classdesc Contains out of the box query handlers.
      * @export
      * @hideconstructor
      */
-
+    
     /**
      * Returns the Oracle Rest Query Handler which handles the query parameters
      * according to the Oracle Rest Specification. Note the Oracle Rest Specification
@@ -91,7 +91,7 @@ define(['./persistenceManager', './persistenceStoreManager', './persistenceUtils
 
           if (shredder != null &&
             unshredder != null) {
-            return _processQuery(request, storeName, findQuery, shredder, unshredder, offset, limit).then(function (response) {
+            return _processQuery(request, storeName, findQuery, shredder, unshredder, offset, limit).then(function(response) {
               if (!response) {
                 return Promise.resolve();
               }
@@ -102,17 +102,15 @@ define(['./persistenceManager', './persistenceStoreManager', './persistenceUtils
                   try {
                     var payloadJson = JSON.parse(payload);
                     if (!payloadJson.links) {
-                      payloadJson.links = [{
-                        rel: 'self',
-                        href: request.url
-                      }];
+                      payloadJson.links = [{rel: 'self', href: request.url}];
                       return persistenceUtils.setResponsePayload(response, payloadJson).then(function (response) {
                         return Promise.resolve(response);
                       });
                     } else {
                       return Promise.resolve(response);
                     }
-                  } catch (err) {}
+                  } catch (err) {
+                  }
                 }
               });
             });
@@ -121,36 +119,27 @@ define(['./persistenceManager', './persistenceStoreManager', './persistenceUtils
         return Promise.resolve();
       };
     };
-
+    
     function _processQuery(request, storeName, findQuery, shredder, unshredder, offset, limit) {
       // first check of we have a collection query or single row query
       // collection query will always return true for cache.hasMatch()
       // single row query will return hasMatch true if that query
       // was executed before, if not we have to query for it
-      return persistenceManager.getCache().hasMatch(request, {
-        ignoreSearch: true
-      }).then(function (hasMatch) {
+      return persistenceManager.getCache().hasMatch(request, {ignoreSearch: true}).then(function (hasMatch) {
         return persistenceStoreManager.openStore(storeName).then(function (store) {
           if (hasMatch) {
-            console.log('hasmatch')
             // check if it's a single row query. If so then we don't need to
             // do a find.
-            return persistenceManager.getCache().match(request, {
-              ignoreSearch: true
-            }).then(function (response) {
-              console.log(response, 'response');
+            return persistenceManager.getCache().match(request, {ignoreSearch: true}).then(function (response) {
               if (response.headers.get('x-oracle-jscpt-resource-type') === 'single') {
                 return Promise.resolve();
               } else {
                 // query in the shredded data
-                console.log('shredded data');
-                console.log(findQuery);
                 return store.find(findQuery);
               }
             });
           } else {
             // this might be a single row query so we need to parse the URL for an id based query
-            console.log('single row query')
             var id = _getRequestUrlId(request);
             if (id) {
               return store.findByKey(id);
@@ -158,28 +147,32 @@ define(['./persistenceManager', './persistenceStoreManager', './persistenceUtils
             return Promise.resolve([]);
           }
         }).then(function (results) {
-          return persistenceManager.getCache().match(request, {
-            ignoreSearch: true
-          }).then(function (response) {
+          return persistenceManager.getCache().match(request, {ignoreSearch: true}).then(function (response) {
             if (response) {
               var hasMore = false;
               var totalResults = 0;
               if (results) {
                 totalResults = results.length;
-                if (offset &&
-                  offset > 0) {
-                  if (offset < results.length) {
+                if (offset
+                  && offset > 0) {
+                  if (offset < results.length)
+                  {
                     hasMore = true;
-                  } else {
+                  }
+                  else
+                  {
                     hasMore = false;
                   }
                   results = results.slice(offset, results.length);
                 }
-                if (limit &&
-                  limit > 0) {
-                  if (limit <= results.length) {
+                if (limit
+                  && limit > 0) {
+                  if (limit <= results.length)
+                  {
                     hasMore = true;
-                  } else {
+                  }
+                  else
+                  {
                     hasMore = false;
                   }
                   results = results.slice(0, limit);
@@ -211,7 +204,8 @@ define(['./persistenceManager', './persistenceStoreManager', './persistenceUtils
                           payloadJson.totalResults = totalResults;
                         }
                         return persistenceUtils.setResponsePayload(response, payloadJson);
-                      } catch (err) {}
+                      } catch (err) {
+                      }
                     } else {
                       return response;
                     }
@@ -225,9 +219,7 @@ define(['./persistenceManager', './persistenceStoreManager', './persistenceUtils
                 return persistenceUtils.requestToJSON(request).then(function (requestObj) {
                   requestObj.url = collectionUrl;
                   return persistenceUtils.requestFromJSON(requestObj).then(function (collectionRequest) {
-                    return persistenceManager.getCache().match(collectionRequest, {
-                      ignoreSearch: true
-                    }).then(function (response) {
+                    return persistenceManager.getCache().match(collectionRequest, {ignoreSearch: true}).then(function (response) {
                       if (response) {
                         var transformedResults = {
                           name: storeName,
@@ -249,7 +241,7 @@ define(['./persistenceManager', './persistenceStoreManager', './persistenceUtils
         });
       });
     };
-
+    
     function _createQueryFromAdfBcParams(value) {
       var findQuery = {};
 
@@ -258,91 +250,88 @@ define(['./persistenceManager', './persistenceStoreManager', './persistenceUtils
         var queryExpArray = value.split(';');
         var i;
         var selectorQuery = {};
-
-        for (i = 0; i < queryExpArray.length; i++) {
-
-          selectorQuery = parser.parse(queryExpArray[i], function (operatorValue, operands) {
-            operatorValue = operatorValue.toUpperCase();
-            // the LHS operand is always a value operand
-            if (operatorValue != 'AND' &&
-              operatorValue != 'OR') {
-              operands[0] = 'value.' + operands[0];
-            }
-            var lhsOp = operands[0];
-            var rhsOp = operands[1];
-            var returnExp = {};
-            switch (operatorValue) {
-              case '>':
-                returnExp[lhsOp] = {
-                  $gt: rhsOp
-                };
-                break;
-              case '<':
-                returnExp[lhsOp] = {
-                  $lt: rhsOp
-                };
-                break;
-              case '>=':
-                returnExp[lhsOp] = {
-                  $gte: rhsOp
-                };
-                break;
-              case '<=':
-                returnExp[lhsOp] = {
-                  $lte: rhsOp
-                };
-                break;
-              case '=':
-                returnExp[lhsOp] = {
-                  $eq: rhsOp
-                };
-                break;
-              case '!=':
-                returnExp[lhsOp] = {
-                  $ne: rhsOp
-                };
-                break;
-              case 'AND':
-                returnExp = {
-                  $and: operands
-                };
-                break;
-              case 'OR':
-                returnExp = {
-                  $or: operands
-                };
-                break;
-              case 'LIKE':
-                rhsOp = rhsOp.replace('%', '.+');
-                returnExp[lhsOp] = {
-                  $regex: rhsOp
-                };
-                break;
-              case 'BETWEEN':
-                var betweenOperands = [];
-                betweenOperands[0] = {};
-                betweenOperands[1] = {};
-                betweenOperands[0][lhsOp] = {
-                  $gte: operands[1]
-                };
-                betweenOperands[1][lhsOp] = {
-                  $lte: operands[2]
-                };
-                returnExp = {
-                  $and: betweenOperands
-                };
-                break;
-            }
-            return returnExp;
-          });
+        
+          for (i = 0; i < queryExpArray.length; i++) {
+            
+            selectorQuery = parser.parse(queryExpArray[i], function(operatorValue, operands)
+              {
+                operatorValue = operatorValue.toUpperCase();
+                // the LHS operand is always a value operand
+                if (operatorValue != 'AND' &&
+                  operatorValue != 'OR') {
+                  operands[0] = 'value.' + operands[0];
+                }
+                var lhsOp = operands[0];
+                var rhsOp = operands[1];
+                var returnExp = {};
+                switch (operatorValue) {
+                  case '>':
+                    returnExp[lhsOp] = {
+                      $gt: rhsOp
+                    };
+                    break;
+                  case '<':
+                    returnExp[lhsOp] = {
+                      $lt: rhsOp
+                    };
+                    break;
+                  case '>=':
+                    returnExp[lhsOp] = {
+                      $gte: rhsOp
+                    };
+                    break;
+                  case '<=':
+                    returnExp[lhsOp] = {
+                      $lte: rhsOp
+                    };
+                    break;
+                  case '=':
+                    returnExp[lhsOp] = {
+                      $eq: rhsOp
+                    };
+                    break;
+                  case '!=':
+                    returnExp[lhsOp] = {
+                      $ne: rhsOp
+                    };
+                    break;
+                  case 'AND':
+                    returnExp = {
+                      $and: operands
+                    };
+                    break;
+                  case 'OR':
+                    returnExp = {
+                      $or: operands
+                    };
+                    break;
+                  case 'LIKE':
+                    rhsOp = rhsOp.replace('%', '.+');
+                    returnExp[lhsOp] = {
+                      $regex: rhsOp
+                    };
+                    break;
+                  case 'BETWEEN':
+                    var betweenOperands = [];
+                    betweenOperands[0] = {};
+                    betweenOperands[1] = {};
+                    betweenOperands[0][lhsOp] = {$gte: operands[1]};
+                    betweenOperands[1][lhsOp] = {$lte: operands[2]};
+                    returnExp = {
+                      $and: betweenOperands
+                    };
+                    break;
+                }
+                return returnExp;
+              });
+          }
+          if (Object.keys(selectorQuery).length > 0) {
+            findQuery.selector = selectorQuery;
+          }
         }
-        if (Object.keys(selectorQuery).length > 0) {
-          findQuery.selector = selectorQuery;
-        }
-      }
       return findQuery;
     };
-
+  
     /**
      * Returns the Simple Query Handler which matches the URL query parameter/value pairs
      * against the store's field/value pairs.
@@ -375,17 +364,16 @@ define(['./persistenceManager', './persistenceStoreManager', './persistenceUtils
 
           if (shredder != null &&
             unshredder != null) {
-            console.log(request, storeName, findQuery);
             return _processQuery(request, storeName, findQuery, shredder, unshredder);
           }
         }
         return Promise.resolve();
       };
     };
-
+    
     function _createQueryFromUrlParams(urlParams, ignoreUrlParams) {
       var findQuery = {};
-
+      
       if (urlParams &&
         urlParams.length > 1) {
         var selectorQuery = {};
@@ -455,23 +443,21 @@ define(['./persistenceManager', './persistenceStoreManager', './persistenceUtils
         });
       }
 
-      var iterator = {
-        next: function () {
-          var value = params.shift();
-          return {
-            done: value === undefined,
-            value: value
-          };
-        }
-      };
+      var iterator =
+        {
+          next: function () {
+            var value = params.shift();
+            return {done: value === undefined, value: value};
+          }
+        };
 
       return iterator;
     };
-
+    
     function _cleanURIValue(value) {
       return decodeURIComponent(value.replace(/\+/g, ' '));
     };
-
+    
     function _getRequestUrlId(request) {
       var urlTokens = request.url.split('/');
       if (urlTokens.length > 1) {
@@ -479,7 +465,7 @@ define(['./persistenceManager', './persistenceStoreManager', './persistenceUtils
       }
       return null;
     };
-
+    
     function _getRequestCollectionUrl(request) {
       var urlTokens = request.url.split('/');
       if (urlTokens.length > 1) {
@@ -489,8 +475,7 @@ define(['./persistenceManager', './persistenceStoreManager', './persistenceUtils
       return null;
     };
 
-    return {
-      'getSimpleQueryHandler': getSimpleQueryHandler,
-      'getOracleRestQueryHandler': getOracleRestQueryHandler
-    };
+    return {'getSimpleQueryHandler': getSimpleQueryHandler,
+      'getOracleRestQueryHandler': getOracleRestQueryHandler};
   });
+

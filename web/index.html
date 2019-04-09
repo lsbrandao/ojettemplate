@@ -67,7 +67,7 @@
            ** the header hamburger icon.
         -->
         <div id="navDrawer" class="oj-contrast-marker oj-web-applayout-offcanvas oj-offcanvas-start">
-            <div role="navigation" data-bind="ojComponent: {component: 'ojNavigationList',
+            <div data-bind="visible: userLogin() != ''" role=" navigation" data-bind="ojComponent: {component: 'ojNavigationList',
           optionChange: navChangeHandler, navigationLevel: 'application',
           item: {template: 'navTemplate'}, data: navDataSource,
           selection: router.stateId, edge: 'start'}">
