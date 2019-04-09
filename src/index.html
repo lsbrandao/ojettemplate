@@ -35,7 +35,7 @@
 
     <!-- This is the main css file for the default Alta theme -->
     <!-- injector:theme -->
-    <link rel="stylesheet" href="css/libs/oj/v2.2.0/alta/oj-alta-min.css" type="text/css" />
+    <link rel="stylesheet" href="css/libs/oj/v2.2.0/alta-ios/oj-alta-min.css" type="text/css" />
     <!-- endinjector -->
 
     <!-- This contains icon fonts used by the starter template -->
@@ -67,7 +67,7 @@
            ** the header hamburger icon.
         -->
         <div id="navDrawer" class="oj-contrast-marker oj-web-applayout-offcanvas oj-offcanvas-start">
-            <div role="navigation" data-bind="ojComponent: {component: 'ojNavigationList',
+            <div data-bind="visible: userLogin() != ''" role=" navigation" data-bind="ojComponent: {component: 'ojNavigationList',
           optionChange: navChangeHandler, navigationLevel: 'application',
           item: {template: 'navTemplate'}, data: navDataSource,
           selection: router.stateId, edge: 'start'}">
@@ -130,6 +130,7 @@
             <div id="mainContent" role="main"
                 class="oj-web-applayout-content"
                 data-bind="ojModule: router.moduleConfig">
+                test
             </div>
             <footer data-bind="visible: userLogin() != ''" class="oj-web-applayout-footer" role="contentinfo">
                 <div class="oj-web-applayout-footer-item">

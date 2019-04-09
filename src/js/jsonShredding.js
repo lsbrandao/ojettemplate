@@ -49,7 +49,6 @@ define(['libs/persist/debug/persistenceUtils', 'libs/persist/debug/impl/logger']
             var payloadJson = JSON.parse(payload);
             if (Array.isArray(payloadJson.data)) {
               idArray = payloadJson.data.map(function (jsonEntry) {
-                jsonEntry.firstName = jsonEntry.name.first;
                 if (idAttr instanceof Array) {
                   var key = [];
                   idAttr.forEach(function (keyAttr) {

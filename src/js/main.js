@@ -26,9 +26,9 @@ requirejs.config({
     'ojtranslations': 'libs/oj/v2.2.0/resources',
     'text': 'libs/require/text',
     'signals': 'libs/js-signals/signals',
-    'persist': 'libs/persist/debug',
-    'pouchfind': 'libs/pouchdb.find',
-    'pouchdb': 'libs/pouchdb',
+    // 'persist': 'libs/persist/debug',
+    // 'pouchfind': 'libs/pouchdb.find',
+    // 'pouchdb': 'libs/pouchdb',
   }
   //endinjector
   ,

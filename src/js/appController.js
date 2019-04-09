@@ -24,26 +24,16 @@ define(['ojs/ojcore', 'knockout', 'OfflineController', 'ojs/ojrouter', 'ojs/ojkn
       oj.Router.defaults['urlAdapter'] = new oj.Router.urlParamAdapter();
 
       self.router.configure({
-        'login': {
-          label: 'Login',
-          isDefault: false
-        },
-        'incidents': {
-          label: 'Incidents',
+        'dashboard': {
+          label: 'Dashboard',
           isDefault: true
-        },
+        }
       });
       var navData = [{
-          name: 'Login',
-          id: 'login',
-          iconClass: 'oj-navigationlist-item-icon demo-icon-font-24'
-        },
-        {
-          name: 'Incidents',
-          id: 'incidents',
-          iconClass: 'oj-navigationlist-item-icon demo-icon-font-24'
-        }
-      ];
+        name: 'Login',
+        id: 'login',
+        iconClass: 'oj-navigationlist-item-icon demo-icon-font-24'
+      }, ];
 
       self.navDataSource = new oj.ArrayTableDataSource(navData, {
         idAttribute: 'id'
@@ -87,68 +77,68 @@ define(['ojs/ojcore', 'knockout', 'OfflineController', 'ojs/ojrouter', 'ojs/ojkn
       self.incidentNumber = ko.observable(oj.Translations.getTranslatedString('incidentNumber'));
 
       // Language settings
-      self.languageChecked = ko.observable();
-      self.languageChecked.subscribe(function (data) {
-        var newLang = '';
-        if (data === true) {
-          newLang = 'lt-LT';
-        } else {
-          newLang = 'en-US';
-        }
-        oj.Config.setLocale(newLang,
-          function () {
-            $('html').attr('lang', newLang);
-            self.incidentNumber(oj.Translations.getTranslatedString('incidentNumber'));
-            self.appName(oj.Translations.getTranslatedString('appName'));
-            self.copyright(oj.Translations.getTranslatedString('copyright'));
-            self.about(oj.Translations.getTranslatedString('about'));
-            self.link2Name(oj.Translations.getTranslatedString('contacts'));
-            self.dueDate(oj.Translations.getTranslatedString('dueDate'));
+      // self.languageChecked = ko.observable();
+      // self.languageChecked.subscribe(function (data) {
+      //   var newLang = '';
+      //   if (data === true) {
+      //     newLang = 'lt-LT';
+      //   } else {
+      //     newLang = 'en-US';
+      //   }
+      //   oj.Config.setLocale(newLang,
+      //     function () {
+      //       $('html').attr('lang', newLang);
+      //       self.incidentNumber(oj.Translations.getTranslatedString('incidentNumber'));
+      //       self.appName(oj.Translations.getTranslatedString('appName'));
+      //       self.copyright(oj.Translations.getTranslatedString('copyright'));
+      //       self.about(oj.Translations.getTranslatedString('about'));
+      //       self.link2Name(oj.Translations.getTranslatedString('contacts'));
+      //       self.dueDate(oj.Translations.getTranslatedString('dueDate'));
 
-            self.router.configure({
-              'dashboard': {
-                label: oj.Translations.getTranslatedString('dasboardMenu'),
-                isDefault: true
-              },
-              'incidents': {
-                label: 'Incidents'
-              },
-              'customers': {
-                label: 'Customers'
-              },
-              'about': {
-                label: 'About'
-              }
-            });
-            // Navigation setup
-            navData = [{
-                name: oj.Translations.getTranslatedString('dasboardMenu'),
-                id: 'dashboard',
-                iconClass: 'oj-navigationlist-item-icon demo-icon-font-24 demo-chart-icon-24'
-              },
-              {
-                name: 'Incidents',
-                id: 'incidents',
-                iconClass: 'oj-navigationlist-item-icon demo-icon-font-24 demo-fire-icon-24'
-              },
-              {
-                name: 'Customers',
-                id: 'customers',
-                iconClass: 'oj-navigationlist-item-icon demo-icon-font-24 demo-people-icon-24'
-              },
-              {
-                name: 'About',
-                id: 'about',
-                iconClass: 'oj-navigationlist-item-icon demo-icon-font-24 demo-info-icon-24'
-              }
-            ];
-            self.navDataSource.reset(navData, {
-              idAttribute: 'id'
-            });
-            oj.Router.sync();
-          }
-        );
-      });
+      //       self.router.configure({
+      //         'dashboard': {
+      //           label: oj.Translations.getTranslatedString('dasboardMenu'),
+      //           isDefault: true
+      //         },
+      //         'incidents': {
+      //           label: 'Incidents'
+      //         },
+      //         'customers': {
+      //           label: 'Customers'
+      //         },
+      //         'about': {
+      //           label: 'About'
+      //         }
+      //       });
+      //       // Navigation setup
+      //       navData = [{
+      //           name: oj.Translations.getTranslatedString('dasboardMenu'),
+      //           id: 'dashboard',
+      //           iconClass: 'oj-navigationlist-item-icon demo-icon-font-24 demo-chart-icon-24'
+      //         },
+      //         {
+      //           name: 'Incidents',
+      //           id: 'incidents',
+      //           iconClass: 'oj-navigationlist-item-icon demo-icon-font-24 demo-fire-icon-24'
+      //         },
+      //         {
+      //           name: 'Customers',
+      //           id: 'customers',
+      //           iconClass: 'oj-navigationlist-item-icon demo-icon-font-24 demo-people-icon-24'
+      //         },
+      //         {
+      //           name: 'About',
+      //           id: 'about',
+      //           iconClass: 'oj-navigationlist-item-icon demo-icon-font-24 demo-info-icon-24'
+      //         }
+      //       ];
+      //       self.navDataSource.reset(navData, {
+      //         idAttribute: 'id'
+      //       });
+      //       oj.Router.sync();
+      //     }
+      //   );
+      // });
 
       // Dropdown menu states
       self.menuItemSelect = function (event, ui) {
